@@ -1,18 +1,23 @@
-import { Button, Input, Form, Row } from "antd";
+import { TextInput, Checkbox, Button, Group, Box, PasswordInput } from '@mantine/core';
+import { useForm } from '@mantine/form';
+
 import { useNavigate } from "react-router-dom";
 import { useLoginMutation } from '../api/apiSlice'
+import LoginSideImage from './../../images/Login-Side-Image.png'
+import CboardIconSimple from '../../images/CboardIcon-Simple.png'
 
 export default function Login() {
   let navigate = useNavigate();
-  const [login, { isLoading, error }] = useLoginMutation();
+  const [login, { isLoading, error, data }] = useLoginMutation();
 
   const onFinish = async (values) => {
     console.log('Success:', values);
     try {
-      localStorage.setItem('user', JSON.stringify(values))
-      const result = await login();
+      const result = await login(values);
       console.log(result);
       if (result.data) {
+        localStorage.setItem('user-token', result.data.value)
+        console.log(result.data.value);
         // Successfuly authorized
         navigate('/dashboard')
       }
@@ -21,38 +26,62 @@ export default function Login() {
     }
   };
 
+  const form = useForm({
+    initialValues: {
+      email: '',
+      password: '',
+    },
+
+    validate: {
+      email: (value) => (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value) ? null : 'Invalid email'),
+    },
+  });
+
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', height: 'calc(100vh - 50pt)', alignItems: 'center' }}>
-      <Form
-        id="loginForm"
-        initialValues={{ remember: true }}
-        onFinish={onFinish}
-        autoComplete="current-password"
-        style={{ width: '350pt' }}
-      >
-        <Form.Item
-          label="Email"
-          name="email"
-          rules={[{ required: true, message: 'Пожалуйста введите Email' }]}
-        >
-          <Input />
-        </Form.Item>
+    <div style={{ display: 'flex', justifyContent: 'center', height: '100vh', alignItems: 'center' }}>
+      <div style={{ width: '50%', display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
+        <img src={CboardIconSimple} style={{ display: 'flex', width: '50px', marginBottom: '8px' }} />
+        <h1 class="">Log in</h1>
+        <p style={{ color: '#AAAAAA', marginTop: '-10px', marginBottom: '32px' }}>Use your email and password to log in back into your account</p>
+        <Box sx={{ minWidth: '50%' }} mx="auto">
+          <form onSubmit={form.onSubmit(onFinish)} >
+            <TextInput
+              required
+              label="Email"
+              placeholder="your@email.com"
+              {...form.getInputProps('email')}
+              style={{ padding: '10px 0' }}
+            />
 
-        <Form.Item
-          label="Пароль"
-          name="password"
-          rules={[{ required: true, message: 'Пожалуйста введите пароль' }]}
-        >
-          <Input.Password />
-        </Form.Item>
+            {/* <PasswordInput
+              placeholder="Password"
+              label="Password"
+              // description="Password must include at least one letter, number and special character"
+              required
+            /> */}
+            <PasswordInput
+              label="Password"
+              placeholder="Your password"
+              required
+              style={{ padding: '10px 0' }}
+              {...form.getInputProps('password')}
+            />
 
-        <Form.Item>
-          <Button type="primary" htmlType="submit" style={{ marginTop: '20pt' }}>
-            Войти
-          </Button>
-        </Form.Item>
-        <h4 style={{opacity: isLoading || error ? 1 : 0, color: error ? '#ff4d4f' : 'black'}}>{error ? (error.status == "FETCH_ERROR" ? "Произошла внутренняя ошибка сервера" : "Неправильный логин или пароль") : "Вход..."}</h4>
-      </Form>
+            {/* <Checkbox
+              mt="md"
+              label="I agree to sell my privacy"
+              {...form.getInputProps('termsOfService', { type: 'checkbox' })}
+            /> */}
+
+            <Group position="right" mt="md">
+              <Button type="submit">Login</Button>
+            </Group>
+          </form>
+        </Box>
+      </div>
+      <div style={{ backgroundColor: '#7F7BFF', width: '50%', display: 'flex', height: '100%', justifyContent: 'flex-end', alignItems: 'center' }}>
+        <img src={LoginSideImage} style={{ maxHeight: 'calc(100% - 0px)', maxWidth: 'calc(100% - 0px)' }} />
+      </div>
     </div>
   );
 }

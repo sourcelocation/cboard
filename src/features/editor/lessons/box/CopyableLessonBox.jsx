@@ -1,5 +1,5 @@
 import React from "react"
-import { useDrag } from "react-dnd"
+import { DragPreviewImage, useDrag } from "react-dnd"
 import { useDispatch, useSelector } from "react-redux"
 import { ItemTypes } from "../../Editor"
 import { lessonSet } from "../../students/studentSlice"
@@ -7,11 +7,11 @@ import { selectTeacherById } from "../../teachers/teachersSlice"
 import { selectLessonById } from "../lessonsSlice"
 import { LessonBox } from "./LessonBox"
 
-export const CopyableLessonBox = React.memo(({ lesson, teacher }) => {
+export const CopyableLessonBox = React.memo(({ lesson, teacher, zoom }) => {
   const lessonId = lesson.id
   const teacherId = teacher.id
 
-  const [{ }, drag] = useDrag(() => ({
+  const [{ }, drag, preview] = useDrag(() => ({
     type: ItemTypes.BOX,
     item: () => {
       return { lessonId: lessonId, teacherId: teacherId }
@@ -27,6 +27,9 @@ export const CopyableLessonBox = React.memo(({ lesson, teacher }) => {
     // },
   }), [lessonId, teacherId])
   return (<div ref={drag} style={{ transform: 'translate(0, 0)' }}>
+    <DragPreviewImage connect={preview} src={
+      <LessonBox lessonName={lesson.name} teacherName={teacher.name} color={lesson.color} copyable zoom={zoom} />
+    } />
     <LessonBox lessonName={lesson.name} teacherName={teacher.name} color={lesson.color} copyable />
 
 

@@ -1,4 +1,3 @@
-import { Button, Steps, message, Form, Input, Cascader, Result } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { CirclePicker } from 'react-color';
 import { Link, useParams } from 'react-router-dom';
@@ -6,8 +5,6 @@ import { nanoid } from '@reduxjs/toolkit';
 import { FirstTeacherCreator, SecondTeacherCreator } from './CreateTeacher';
 import { colors } from '../lessons/colors'
 import { useEditorAddLessonMutation, useEditorAddTeacherMutation, useEditorCombinedActionsMutation, useEditorMultipleActionsMutation, useGetEditorDataQuery } from '../../api/apiSlice';
-
-const { Step } = Steps;
 
 export const FirstLessonCreator = (props) => {
   const { result } = props
@@ -104,9 +101,6 @@ export const SecondLessonCreator = (props) => {
 };
 
 export const ThirdCreator = ({ data, projectId }) => {
-  // const dispatch = useDispatch()
-  const [addLesson, addLessonResult] = useEditorAddLessonMutation()
-  const [addTeacher, addTeacherResult] = useEditorAddTeacherMutation()
   const [sendActions, sendActionsResult] = useEditorMultipleActionsMutation()
 
   useEffect(() => {

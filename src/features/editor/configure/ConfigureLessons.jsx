@@ -1,4 +1,3 @@
-import { Cascader, Divider, Button, Input, Form, Affix, Typography } from 'antd';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { deleteCopyableLesson, lessonUpdated, selectAllLessons } from '../lessons/lessonsSlice';
@@ -7,12 +6,9 @@ import { MdCircle } from 'react-icons/md'
 import { useDispatch } from 'react-redux';
 import { BiPencil } from 'react-icons/bi';
 import { copyableLessonDeleted } from '../lessons/lessonsSlice'
-import { DeleteOutlined } from '@ant-design/icons';
 import { colors } from '../lessons/colors'
 import { useEditorDeleteLessonMutation, useEditorUpdateLessonsMutation, useGetEditorDataQuery } from '../../api/apiSlice';
 import { useParams } from 'react-router-dom';
-
-const { Title } = Typography;
 
 export const ConfigureLessons = ({ }) => {
   const params = useParams();

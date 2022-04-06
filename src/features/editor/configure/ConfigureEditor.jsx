@@ -1,14 +1,9 @@
-import { Layout, Menu, Breadcrumb, Typography } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
 import { IoDocumentTextOutline } from 'react-icons/io5'
 import { BiBook } from 'react-icons/bi'
 import { Link, useParams } from 'react-router-dom';
 import React, { useState } from 'react';
 import { ConfigureLessons } from './ConfigureLessons';
 import { ConfigureTeachers } from './ConfigureTeachers';
-
-const { SubMenu } = Menu;
-const { Header, Content, Sider } = Layout;
 
 export function ConfigureEditor({ }) {
   const params = useParams();

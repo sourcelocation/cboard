@@ -9,7 +9,8 @@ import { store } from '../../app/store'
 import { apiSlice } from '../api/apiSlice.js';
 
 const editor = {
-  display: 'flex'
+  display: 'flex',
+  height: 'calc(100vh - 110px)'
 }
 export const ItemTypes = {
   BOX: 'box'
@@ -18,14 +19,12 @@ export const ItemTypes = {
 export default function Editor(props) {
   const params = useParams();
   const id = params.id
-  
+
   return (
     <DndProvider backend={HTML5Backend}>
-      <div>
-        <div style={editor} >
-          <EditorSchedule {...props} projectId={id} />
-          <EditorSidebar projectId={id} />
-        </div>
+      <div style={editor} >
+        <EditorSchedule {...props} projectId={id} />
+        <EditorSidebar projectId={id} />
       </div>
     </DndProvider>
   );

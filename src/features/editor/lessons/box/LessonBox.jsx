@@ -6,40 +6,99 @@ import { lessonSet, lessonMoved, lessonDeleted, selectLessonByI, lessonRoomAdded
 import useFitText from "use-fit-text";
 import { selectLessonById } from '../lessonsSlice.js'
 import React, { useState } from 'react'
-import Modal from 'antd/lib/modal/Modal'
-import { Button } from 'antd'
 import { selectAllRooms, selectRoomsForLessonI } from '../../schedule/scheduleInfoSlice.js'
 import { IoSettingsOutline } from 'react-icons/io5'
 import { colors } from '../colors'
+import { applyZoom } from './DraggableLessonBox.jsx'
 
 
-export const LessonBox = React.memo(({ color, lessonName, teacherName, room, copyable, selectRoom }) => {
+export const LessonBox = React.memo(({ color, lessonName, teacherName, room, copyable, selectRoom, zoom }) => {
   const colorsStyle = colors[color] || [color, "black"]
-  const { fontSize: fontSize1, ref: ref1 } = useFitText();
-  const { fontSize: fontSize2, ref: ref2 } = useFitText();
 
   const renderedRoom = (
     (room || copyable ?
-      (<Button size='small' type='text' style={{ color: colorsStyle[1], margin: '0 0 -2pt 2pt', padding: '0', fontSize: '8.5pt', fontWeight: 'bold', letterSpacing: '-1pt' }} onClick={selectRoom}>{room}</Button>) :
+      (<Button
+        size='small'
+        type='text' style={{
+          color: colorsStyle[1],
+          padding: '0',
+          fontSize: applyZoom(10, zoom),
+          fontWeight: 'bold',
+          letterSpacing: '-1pt',
+          width: '12%',
+        }}
+        onClick={selectRoom}>
+        {room}
+      </Button>) :
       (
-        <Button size='small' type='text' style={{ color: colorsStyle[1], margin: '0 0 -2pt 2pt', padding: '0', }} icon={<IoSettingsOutline />} onClick={selectRoom} />
+        <Button
+          size='small'
+          type='text'
+          style={{
+            color: colorsStyle[1],
+            fontSize: applyZoom(10, zoom),
+            padding: '0',
+            height: '35%',
+            width: '12%'
+          }}
+          icon={
+            <IoSettingsOutline
+              size={zoom / 7}
+            />}
+          onClick={selectRoom}
+        />
       )
     )
   )
   return (
-    <div style={{ backgroundColor: colorsStyle[0], borderRadius: '6pt', display: 'flex', justifyContent: copyable ? 'center' : 'space-between', alignItems: 'flex-end' }} >
-      {renderedRoom}
-      <div>
-        <div ref={ref1} style={{ fontSize: fontSize1 }}>
-          <h4 style={{ margin: '0pt', padding: `8pt 0 0 0 `, color: colorsStyle[1], fontWeight: 'bold' }}>{lessonName}</h4>
+    <div
+      style={{
+        alignItems: 'flex-end',
+        backgroundColor: colorsStyle[0],
+        borderRadius: applyZoom(9, zoom),
+        display: 'flex',
+        width: applyZoom(180, zoom),
+        height: applyZoom(60, zoom),
+        justifyContent: copyable ? 'center' : 'start'
+      }}
+    >
+      {!copyable && renderedRoom}
+      <div
+        style={{
+          height: '100%',
+          width: '76%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <div
+          style={{
+            margin: '0pt',
+            display: 'flex',
+            justifyContent: 'flex-end',
+            color: colorsStyle[1],
+            fontWeight: '600',
+            fontSize: applyZoom(13, zoom),
+          }}
+        >
+          {lessonName}
         </div>
-        <div ref={ref2} style={{ fontSize: fontSize2, height: '23.5pt', width: '108pt', margin: '0', padding: '0 0 8pt 0', color: colorsStyle[1] }} >
+        <p
+          style={{
+            fontSize: applyZoom(10.5, zoom),
+            margin: '0',
+            color: colorsStyle[1],
+
+            whiteSpace: 'nowrap',
+            textOverflow: 'ellipsis',
+          }}
+        >
           {teacherName}
-        </div>
+        </p>
       </div>
-      <div style={{ opacity: '0' }}>
-        {renderedRoom}
-      </div>
+      {/* {renderedRoom} */}
     </div>
   )
 })

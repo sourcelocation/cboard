@@ -3,14 +3,12 @@ import { CellMeasurer, CellMeasurerCache, Grid } from 'react-virtualized';
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { lessonFieldAdded, lessonFieldDeleted, lessonSet, selectAllClasses, selectLessonByI, studentDeleted, studentDetailsChanged } from "../students/studentSlice";
-import { Modal, Button, Input, Select, Form, Row, Col } from 'antd';
 import { BiPencil } from 'react-icons/bi';
 import { selectDays } from './scheduleInfoSlice';
 import { useDrop } from 'react-dnd';
 import { ItemTypes } from '../Editor';
-import { DraggableLessonBox } from '../lessons/box/DraggableLessonBox';
+import { applyZoom, DraggableLessonBox } from '../lessons/box/DraggableLessonBox';
 import { useEditorCopyLessonMutation, useEditorDeleteStudentMutation, useEditorLessonFieldCountMutation, useEditorMoveLessonMutation, useEditorUpdateStudentMutation, useGetEditorDataQuery } from '../../api/apiSlice';
-const { Option } = Select;
 
 const cache = new CellMeasurerCache({
   defaultWidth: 1000,
@@ -42,7 +40,13 @@ export class RenderGrid extends React.Component {
         columnWidth={cache.columnWidth}
         rowHeight={cache.rowHeight}
         deferredMeasurementCache={cache}
-        cellRenderer={(values) => cellRenderer({ ...this.props, ...values, content: this.props.data[values.rowIndex][values.columnIndex], allowedFields: this.props.allowedFields, recompute: this.recompute })}
+        cellRenderer={(values) => cellRenderer({
+          ...this.props,
+          ...values,
+          content: this.props.data[values.rowIndex][values.columnIndex],
+          schedule: this.props.data, allowedFields: this.props.allowedFields,
+          recompute: this.recompute
+        })}
         overscanColumnCount={2}
         overscanRowCount={1}
       />
@@ -51,7 +55,17 @@ export class RenderGrid extends React.Component {
 }
 
 function cellRenderer(props) {
-  const { columnIndex, key, parent, rowIndex, style, content, allowedFields, recompute } = props
+  const {
+    allowedFields,
+    columnIndex,
+    content,
+    key,
+    parent,
+    rowIndex,
+    style,
+    recompute,
+    zoom
+  } = props
 
   return (
     <CellMeasurer
@@ -71,20 +85,20 @@ function cellRenderer(props) {
 }
 
 function Class1(props) {
-  const { allowedFields, data, classI, students } = props
+  const { allowedFields, data, classI, students, zoom } = props
   const dayNames = useSelector(state => selectDays(state))
 
   return (
     <div style={{ display: 'flex', flexDirection: 'row', marginBottom: '30pt' }} key={props.dayI}>
       {classI === 0 && <h4 style={{ padding: '34pt 20pt', width: '100pt', color: 'black' }}>{dayNames[props.dayI]}</h4>}
       <div style={{ flex: 1, flexDirection: 'column', padding: '0 30pt 0 5pt' }}>
-        <h2 style={{ paddingRight: '0pt' }}>{data.name + " класс"}</h2>
+        <h2 style={{ paddingRight: '0pt', fontSize: applyZoom(20, zoom) }}>{data.name}</h2>
         <div style={{ display: 'flex', flexDirection: 'row' }} key={data.name}>
           {Object.keys(data.students).map((studentId, studentI) => {
             return <Student
               {...props}
               studentId={studentId}
-              allowedFields={allowedFields && allowedFields[studentI]}
+              allowedFields={allowedFields && allowedFields[studentId]}
               studentI={studentI}
               data={data.students[studentId]}
               student={students[studentId]}
@@ -97,7 +111,7 @@ function Class1(props) {
   )
 }
 function Student(props) {
-  const { studentId, dayI, allowedFields, studentI, data, recompute, classI, projectId, classNames, student } = props
+  const { studentId, dayI, allowedFields, studentI, data, recompute, classI, projectId, classNames, student, zoom } = props
 
   const schedule = data
   const dispatch = useDispatch()
@@ -142,11 +156,11 @@ function Student(props) {
   }
   const deleteButtonClicked = () => {
     // dispatch(studentDeleted(studentId))
-    deleteStudent({ studentId: studentId})
+    deleteStudent({ studentId: studentId })
     hideRenameModal()
   }
   const classSelect = (
-    <Form.Item name="class1" noStyle rules={[{ required: true, message: 'Пожалуйста выберите класс ученика' }]}>
+    <Form.Item name="class1" noStyle rules={[{ required: true, message: 'Please select student\'s class' }]}>
       <Select>
         {classNames.map(c => <Option value={c}>{c}</Option>)}
       </Select>
@@ -156,10 +170,10 @@ function Student(props) {
   const bottomButtonStyle = { fontWeight: 'bold', marginTop: '-20pt', margin: '0 2pt' }
 
   return <div
-    style={{ margin: '0 8pt' }}
+    style={{ marginLeft: applyZoom(6, zoom), marginRight: applyZoom(6, zoom) }}
     key={student.id}>
     <div
-      style={{ paddingLeft: '32pt' }}
+      style={{ paddingLeft: applyZoom(40, zoom) }}
       onMouseEnter={e => {
         seteditButtonShown(true)
       }}
@@ -167,7 +181,11 @@ function Student(props) {
         seteditButtonShown(false)
       }}>
       <Row justify="center">
-        <Col>{student.name}</Col>
+        <Col>
+          <p style={{ fontSize: applyZoom(15, zoom) }}>
+            {student.name}
+          </p>
+        </Col>
         <Col><Button type="text" size='small' shape="round" style={editButtonShown ? {} : { opacity: '0' }} onClick={() => { showRenameModal() }} icon={<BiPencil />}></Button></Col>
       </Row>
     </div>
@@ -175,7 +193,7 @@ function Student(props) {
 
 
     {data.map((lesson, lessonI) => {
-      return <div style={{ margin: '10pt 0' }} key={lessonI}>
+      return <div style={{ margin: `${applyZoom(8, zoom)} 0` }} key={lessonI}>
         {<Field {...props} i={{ dayI: dayI, classI: classI, studentI: studentI, studentId: student.id, lessonI: lessonI }} canPlace={allowedFields && allowedFields[lessonI]} recompute={recompute} lesson={lesson} />}
       </div>
     })}
@@ -210,26 +228,27 @@ function Student(props) {
         onFinish={onSubmit}
         initialValues={{ name: student.name, class1: student.className }}
       >
-        <Form.Item label="Имя" name="name" rules={[{ required: true, message: 'Пожалуйста введите имя ученика' }]} >
-          <Input autoComplete="off" addonAfter={classSelect} placeholder="Имя" style={{ width: '100%' }} />
+        <Form.Item label="Name" name="name" rules={[{ required: true, message: 'Пожалуйста введите имя ученика' }]} >
+          <Input autoComplete="off" addonAfter={classSelect} placeholder="Name" style={{ width: '100%' }} />
         </Form.Item>
       </Form>
     </Modal>
   </div>
 }
 
-const fieldStyle = {
+const fieldStyle = (zoom) => ({
   backgroundColor: '#FFFFFF',
   borderRadius: '6pt',
   textAlign: 'center',
-  width: '130pt',
-  height: '48pt',
+  width: applyZoom(180, zoom),
+  height: applyZoom(60, zoom),
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center'
-}
+})
 
-export const Field = React.memo(function Field({ i, canPlace, projectId, teachers, lessons, lesson: fieldLesson }) {
+export const Field = React.memo(function Field(props) {
+  const { i, canPlace, projectId, teachers, lessons, lesson: fieldLesson, zoom } = props
   const lesson = lessons[fieldLesson?.lessonId]
   const teacher = teachers[fieldLesson?.teacherId]
   // const { lesson, teacher } = useGetEditorDataQuery(projectId, {
@@ -296,13 +315,26 @@ export const Field = React.memo(function Field({ i, canPlace, projectId, teacher
       divStyle = { border: isOver ? '1px solid #bae637' : '1px solid #B1B2B6', ...(isOver && { backgroundColor: '#f6ffed' }) }
     }
   }
+  console.log(`calc(130pt * ${zoom})`);
+  const isDraggingThis = dragged && dragged.i && dragged.i.dayI == i.dayI && dragged.i.studentId == i.studentId && dragged.i.lessonI == i.lessonI
 
   if (!lesson || lessonId === undefined) {
-    return <div style={{ ...fieldStyle, ...(divStyle) }} ref={drop}></div>
+    return <div style={{ ...fieldStyle(zoom), ...(divStyle) }} ref={drop}></div>
   } else {
     return (
-      <div style={(dragged && dragged.i && dragged.i.dayI == i.dayI && dragged.i.studentId == i.studentId && dragged.i.lessonI == i.lessonI) ? { ...(divStyle), width: '130pt', height: '48pt', borderRadius: '6pt' } : { width: '130pt' }} ref={drop}>
-        <DraggableLessonBox i={i} lesson={lesson} teacher={teacher} roomName={lesson.room} />
+      <div
+        style={(isDraggingThis) ? {
+          ...(divStyle),
+          borderRadius: '6pt'
+        } : {}}
+        ref={drop}>
+        <DraggableLessonBox
+          {...props}
+          i={i}
+          lesson={lesson}
+          teacher={teacher}
+          roomName={fieldLesson?.room}
+        />
       </div>
     )
   }

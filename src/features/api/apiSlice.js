@@ -20,17 +20,14 @@ function createWebsocketMutation(builder, actionName) {
     },
   })
 }
-console.log('====================================');
-console.log(process.env.REACT_APP_HOST);
-console.log('====================================');
 export const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({
-    baseUrl: `http://${process.env.REACT_APP_HOST}:8080`,
+    baseUrl: `http://127.0.0.1:8080`,
     prepareHeaders: (headers) => {
-      const user = JSON.parse(localStorage.getItem('user'))
-      if (user) {
-        headers.set("Authorization", `Basic ${window.btoa(user.email + ':' + user.password)}`);
+      const token = localStorage.getItem('user-token')
+      if (token && !headers.get("Authorization")) {
+        headers.set("Authorization", `Bearer ${token}`);
       }
       return headers;
     },
@@ -38,9 +35,12 @@ export const apiSlice = createApi({
   tagTypes: ['Organization'],
   endpoints: builder => ({
     login: builder.mutation({
-      query: () => ({
-        url: "/authenticate",
-        method: "POST"
+      query: (values) => ({
+        url: "/login",
+        method: "POST",
+        headers: {
+          'Authorization' : `Basic ${window.btoa(values.email + ':' + values.password)}`
+        }
       })
     }),
     organization: builder.query({
@@ -55,7 +55,11 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ['Organization'],
     }),
-
+    generateExcel: builder.query({
+      query: (id) => ({
+        url: `/project/${id}/generateExcel`
+      })
+    }),
 
 
 
@@ -81,10 +85,10 @@ export const apiSlice = createApi({
       async onCacheEntryAdded(arg, { updateCachedData, cacheDataLoaded, cacheEntryRemoved, dispatch, getCacheEntry }) {
         await cacheDataLoaded
         const receivedData = getCacheEntry().data
-        const user = JSON.parse(localStorage.getItem('user'))
+        const usertoken = localStorage.getItem('user-token')
 
         const connect = () => {
-          websocketConnection = { ws: new WebSocket(`ws://${process.env.REACT_APP_HOST}:8080/editor/ws/${arg}?email=${user.email}&password=${user.password}`), projectId: arg }
+          websocketConnection = { ws: new WebSocket(`ws://127.0.0.1:8080/editor/ws/${arg}?token=${usertoken}`), projectId: arg }
 
           websocketConnection.ws.addEventListener('message', async function (event) {
             if (event.data) {
@@ -106,7 +110,9 @@ export const apiSlice = createApi({
           // Creates infinite loop ^^
         }
 
-        connect()
+        if (websocketConnection == undefined || websocketConnection.ws.readyState >= 2 || websocketConnection.projectId != arg) {
+          connect()
+        }
         await cacheEntryRemoved
         websocketConnection.ws.close()
       },
@@ -114,6 +120,7 @@ export const apiSlice = createApi({
     editorMoveLesson: createWebsocketMutation(builder, "moveScheduleLessonAction"),
     editorCopyLesson: createWebsocketMutation(builder, "copyScheduleLessonAction"),
     editorLessonFieldCount: createWebsocketMutation(builder, "lessonFieldCountAction"),
+    editorSetScheduleLessonRoom: createWebsocketMutation(builder, "setScheduleLessonRoomAction"),
 
     editorAddStudent: createWebsocketMutation(builder, "addStudentAction"),
     editorUpdateStudent: createWebsocketMutation(builder, "updateStudentAction"),
@@ -138,11 +145,12 @@ export const {
   useOrganizationQuery,
   useGetEditorDataQuery,
   useAddProjectMutation,
-
+  useGenerateExcelQuery,
 
   useEditorMoveLessonMutation,
   useEditorCopyLessonMutation,
   useEditorLessonFieldCountMutation,
+  useEditorSetScheduleLessonRoomMutation,
 
   useEditorAddStudentMutation,
   useEditorUpdateStudentMutation,

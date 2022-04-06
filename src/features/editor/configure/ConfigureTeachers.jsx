@@ -1,13 +1,9 @@
-import { Affix, Button, Typography, Form, Input, Divider, Cascader } from "antd";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAllTeachers, deleteTeacher, teacherUpdated } from "../teachers/teachersSlice";
-import { DeleteOutlined } from '@ant-design/icons';
 import { useEditorDeleteTeacherMutation, useEditorUpdateTeachersMutation, useGetEditorDataQuery } from "../../api/apiSlice";
 import { useParams } from "react-router-dom";
 import { BiPencil } from "react-icons/bi";
-
-const { Title } = Typography;
 
 export const ConfigureTeachers = ({ changeTab }) => {
   const params = useParams();
@@ -23,9 +19,7 @@ export const ConfigureTeachers = ({ changeTab }) => {
     }),
   })
   const lessonsCascaderOptions = [...Object.values(lessons)].map(lessons => { return { label: lessons.name, value: lessons.id } })
-
   const [form] = Form.useForm();
-  const dispatch = useDispatch()
   const [madeChanges, setmadeChanges] = useState(false);
 
   const onValuesChange = (values) => {
@@ -37,21 +31,9 @@ export const ConfigureTeachers = ({ changeTab }) => {
     let patches = {}
     for (const tId in values) {
       const t = values[tId]
-      patches[tId] = { name: t.name, taughtLessons: t.taughtLessons.map(id1 => ({id: id1[0]})) }
+      patches[tId] = { name: t.name, taughtLessons: t.taughtLessons.map(id1 => ({ id: id1[0] })) }
     }
     updateTeachers({ patches: patches })
-  }
-  // const add = () => {
-
-  // }
-  const setupLessons = () => {
-    form.validateFields().then(values => {
-      console.log(values);
-      changeTab('1')
-    })
-  }
-  const deleteButtonClicked = (id) => {
-    dispatch(deleteTeacher(id))
   }
 
   return (
@@ -108,7 +90,7 @@ const TeacherConfig = ({ teacher, lessonsCascaderOptions }) => {
               style={{ width: '150pt' }}
             />
           </Form.Item>
-          <Button danger type="text" onClick={() => deleteTeacher({teacherId: teacher.id})} icon={<DeleteOutlined />} />
+          <Button danger type="text" onClick={() => deleteTeacher({ teacherId: teacher.id })} icon={<DeleteOutlined />} />
         </div>
       </Divider>
       <Form.Item name={[teacher.id, 'taughtLessons']} label={`Преподаваемые предметы`} initialValue={teacher.taughtLessons.map(t => [t.id])}>

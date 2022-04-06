@@ -68,7 +68,6 @@ export function transformStudentsToScheduleData(students) {
   if (!students || students.length == 0) {
     return [[], [], [], [], []]
   }
-  console.log(students);
   let res = students[0].schedule.map((item) => [])
 
   for (const s of students) {

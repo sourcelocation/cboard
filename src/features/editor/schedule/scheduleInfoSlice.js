@@ -2,7 +2,7 @@ import { createSlice, createSelector } from '@reduxjs/toolkit'
 import { editorDataReceived, editorMessageReceived } from '../../api/apiSlice';
 import { selectAllStudents } from '../students/studentSlice';
 
-const initialState = { days: ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница"], rooms: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27"] }
+const initialState = { days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], rooms: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27"] }
 
 
 const scheduleInfoSlice = createSlice({
@@ -17,21 +17,21 @@ const scheduleInfoSlice = createSlice({
     }
   },
   extraReducers(builder) {
-      // .addMatcher(editorMessageReceived, (state, action) => {
-      //   const data = action.data
-      //   if (data) {
-      //     const type = data.type
-      //     state.data = [[], [], [], [], []]
-      //   }
-      // })
-      // .addMatcher(editorDataReceived, (state, action) => {
-      //   const data = action.payload
-      //   if (data && data.students) {
-      //     const students = data.students
-      //     console.log(students);
-      //     state.data = transformStudentsToScheduleData(students)
-      //   }
-      // })
+    // .addMatcher(editorMessageReceived, (state, action) => {
+    //   const data = action.data
+    //   if (data) {
+    //     const type = data.type
+    //     state.data = [[], [], [], [], []]
+    //   }
+    // })
+    // .addMatcher(editorDataReceived, (state, action) => {
+    //   const data = action.payload
+    //   if (data && data.students) {
+    //     const students = data.students
+    //     console.log(students);
+    //     state.data = transformStudentsToScheduleData(students)
+    //   }
+    // })
   }
 });
 
@@ -41,6 +41,50 @@ export const selectDays = state => state.scheduleInfo.days
 const selectRooms = state => {
   return state.scheduleInfo.rooms
 }
+
+export function roomsForScheduleLessonI(i, roomsList, schedule) {
+  if (i) {
+    console.log(schedule);
+    const lessonPlacing = schedule[i.dayI][i.classI].students[i.studentId][i.lessonI]
+    // const rowPlacedLessons = Array.from(new Set(students.map(s => {
+    //   const l = s.schedule[i.dayI][i.lessonI]
+    //   return l
+    // }).filter(l => l !== undefined)))
+
+    let unallowed = []
+    //let allowOnlyRoom = null // TODO
+    console.log(schedule);
+    for (const c of schedule[i.dayI]) {
+      for (const s of Object.values(c.students)) {
+        if (s.length <= i.lessonI) { continue }
+        const l = s[i.lessonI]
+        if (l) {
+          if (!(lessonPlacing.lessonId == l.lessonId && lessonPlacing.teacherId == l.teacherId) && l.room) {
+            unallowed.push(l.room)
+          } else {
+            // foundExactMatch = true
+          }
+        }
+      }
+    }
+    unallowed = Array.from(new Set(unallowed))
+
+    return [...roomsList.filter(r => unallowed.find(r1 => r1 == r) === undefined).map(r => {
+      return {
+        name: r,
+        available: true
+      }
+    }
+    ), ...unallowed.map(r => {
+      return {
+        name: r,
+        available: false
+      }
+    }
+    ),]
+  }
+}
+
 export const selectRoomsForLessonI = createSelector([(state, i) => i, selectRooms, selectAllStudents],
   (i, roomsList, students) => {
     if (i) {

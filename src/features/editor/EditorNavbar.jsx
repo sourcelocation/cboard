@@ -1,12 +1,11 @@
-import { Spin } from 'antd'
 import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useOrganizationQuery, websocketConnection } from '../api/apiSlice'
 import logo from './../../images/CboardFile.png'
-import { LoadingOutlined } from '@ant-design/icons';
 import { BsCloudCheck, BsCloudSlash, BsCloudMinus } from 'react-icons/bs'
+import { Loader } from 'tabler-icons-react'
 
-export const EditorNavbar = () => {
+export const EditorNavbar = ({ setZoom }) => {
   const params = useParams()
   const projectId = params.id
   const { data: organization } = useOrganizationQuery();
@@ -22,21 +21,21 @@ export const EditorNavbar = () => {
     };
   }, []);
 
-  let syncText = "Соединение..."
+  let syncText = "Connecting..."
   let syncIcon = <BsCloudMinus />
   if (syncedState == 1) {
-    syncText = "Подключено"
+    syncText = "Synced"
     syncIcon = <BsCloudCheck />
   } else if (syncedState == 3) {
-    syncText = "Соединение прервано"
+    syncText = "Connection failed"
     syncIcon = <BsCloudSlash />
   }
 
   return (
-    <nav style={{ backgroundColor: '#fafafa', padding: '6pt 6pt', position: 'sticky', top: '0', border: '1px solid #f0f0f0' }}>
+    <nav style={{ backgroundColor: '#fafafa', padding: '6px 6px', position: 'sticky', top: '0', border: '1px solid #f0f0f0' }}>
       <section style={{ display: 'flex', padding: '0 8pt', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <Link to={!!localStorage.getItem('user') ? "/dashboard" : "/"} style={{ textDecoration: 'none' }}>
+          <Link to={!!localStorage.getItem('user-token') ? "/dashboard" : "/"} style={{ textDecoration: 'none' }}>
             <img src={logo} style={{ width: '30pt', height: '30pt' }} />
           </Link>
           {project ? <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column', textAlign: 'start', padding: '0 12pt' }}>
@@ -46,9 +45,9 @@ export const EditorNavbar = () => {
               {syncIcon}
             </div>
           </div>
-            : <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />}
+            : <Loader />}
         </div>
       </section>
     </nav>
   )
-}
+} 

@@ -4,20 +4,17 @@ import { useDragDropManager, useDrop } from "react-dnd";
 import { useDispatch } from "react-redux";
 import { getPlacements } from "../lessons/logic";
 import { dayAdded, lessonDeleted, transformStudentsToScheduleData } from "../students/studentSlice";
-import { Modal, Button, Input, Form, Spin } from 'antd';
 import { addDay } from "./scheduleInfoSlice";
 import { AutoSizer } from 'react-virtualized'
 import { RenderGrid } from "./EditorGrid";
 import { ItemTypes } from "../Editor";
-import { LoadingOutlined } from '@ant-design/icons';
-import { selectScheduleData, useGetEditorDataQuery } from "../../api/apiSlice";
-
+import { useGetEditorDataQuery } from "../../api/apiSlice";
 
 export default function EditorSchedule(props) {
   const dragDropManager = useDragDropManager()
   const monitor = dragDropManager.getMonitor();
   const projectId = props.projectId
-  
+
   const { scheduleData, students, classNames, teachers, lessons } = useGetEditorDataQuery(projectId, {
     selectFromResult: ({ data }) => ({
       scheduleData: data ? transformStudentsToScheduleData(Object.values(data.students.entities)) : [[], [], [], [], []],
@@ -31,6 +28,7 @@ export default function EditorSchedule(props) {
   })
 
   const [allowedFields, setallowedFields] = useState(null)
+  const [zoom, setZoom] = useState(100)
 
   const [modalShown, setmodalShown] = useState(false)
   const [form] = Form.useForm();
@@ -59,6 +57,13 @@ export default function EditorSchedule(props) {
     setmodalShown(false)
   }
 
+  const onZoomChange = (v) => {
+    console.log(v);
+  }
+  const onPanChange = (v) => {
+    console.log(v);
+  }
+
   useEffect(() => monitor.subscribeToStateChange(() => {
     if (scheduleData) {
       const item = monitor.getItem()
@@ -67,7 +72,7 @@ export default function EditorSchedule(props) {
         const i = item.i
         const modified = cloneDeep(scheduleData)
         if (i) {
-          modified[i.dayI][i.classI].students[i.studentId][i.lessonI] = {}
+          modified[i.dayI][i.classI].students[i.studentId][i.lessonI] = null
         }
         const res = getPlacements(item, modified)
         setallowedFields(res)
@@ -78,21 +83,25 @@ export default function EditorSchedule(props) {
   }), [scheduleData, allowedFields])
 
   return (
-    !!scheduleData ? (<div style={{ height: 'calc(100vh - 54pt)', width: 'calc(100% - 160pt)', }} ref={drop}>
+    !!scheduleData ? (<div style={{ width: 'calc(100% - 160pt)', }} ref={drop}>
+      <section style={{ display: 'flex', padding: '6pt 8pt', alignItems: 'center', justifyContent: 'flex-end' }}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <ZoomSelect setZoom={setZoom} />
+        </div>
+      </section>
       <AutoSizer>
         {({ height, width }) => (
           <RenderGrid
             {...props}
-            height={height}
-            width={width}
-
-            data={scheduleData}
+            allowedFields={allowedFields}
             classNames={classNames}
+            data={scheduleData}
+            height={height}
+            lessons={lessons}
             students={students}
             teachers={teachers}
-            lessons={lessons}
-
-            allowedFields={allowedFields}
+            width={width}
+            zoom={zoom}
           />
         )}
       </AutoSizer>
@@ -110,7 +119,7 @@ export default function EditorSchedule(props) {
         ]}
       >
         <Form id="createDayForm" form={form} requiredMark={false} onFinish={onSubmit}>
-          <Form.Item label="Название" name="name" rules={[{ required: true, message: 'Имя дня не может быть пустым' }]} >
+          <Form.Item label="Name" name="name" rules={[{ required: true }]} >
             <Input autoComplete="off" placeholder="Напр. Суббота" />
           </Form.Item>
         </Form>
@@ -118,5 +127,11 @@ export default function EditorSchedule(props) {
     </div>) : (
       <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
     )
+  )
+}
+const ZoomSelect = ({setZoom}) => {
+  return (
+    // <Input a size='small' style={{width: '150px'}}/>
+    <InputNumber min={1} max={100} addonAfter="%" defaultValue={100} size='small' onChange={setZoom} style={{width: '80px'}} controls={false} />
   )
 }

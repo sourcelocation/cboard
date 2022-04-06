@@ -5,19 +5,26 @@ import { ItemTypes } from "../../Editor"
 import { selectTeacherById } from "../../teachers/teachersSlice"
 import { selectLessonById } from "../lessonsSlice"
 import { LessonBox } from "./LessonBox"
-import { Button, Modal, } from 'antd';
 import { useState } from "react";
-import { selectRoomsForLessonI } from "../../schedule/scheduleInfoSlice"
+import { roomsForScheduleLessonI, selectRoomsForLessonI } from "../../schedule/scheduleInfoSlice"
 import { lessonDeleted, lessonMoved, lessonRoomAdded } from "../../students/studentSlice"
+import { useEditorSetScheduleLessonRoomMutation } from "../../../api/apiSlice"
 
-export const DraggableLessonBox = React.memo(({ lesson, teacher, roomName, i }) => {
+export const applyZoom = (size, zoom) => {
+  return zoom ? `calc(${size}px * ${zoom} / 100)` : `${size}px`
+}
+
+export const DraggableLessonBox = React.memo((props) => {
+  const { lesson, teacher, roomName, i, lessons, teachers, students, schedule, zoom } = props
+
+  const [setRoom, setRoomResult] = useEditorSetScheduleLessonRoomMutation({
+    fixedCacheKey: 'editor-update-teachers',
+  })
   const lessonId = lesson.id
   const teacherId = teacher.id
 
-  const dispatch = useDispatch()
   const [modalShown, setmodalShown] = useState(false)
-  
-  const roomNames = [] 
+  const roomNames = modalShown ? roomsForScheduleLessonI(i,Array.from(Array(27).keys()).map(i => `${i + 1}`),schedule) : []
 
   const [{ isDragging, isOver }, drag] = useDrag(() => ({
     type: ItemTypes.BOX,
@@ -37,12 +44,12 @@ export const DraggableLessonBox = React.memo(({ lesson, teacher, roomName, i }) 
   }
 
   return (
-    <div ref={drag} style={{ opacity: isDragging ? 0 : 1 }}>
-      <LessonBox lessonName={lesson.name} teacherName={teacher.name} color={lesson.color} room={roomName} copyable={false} selectRoom={roomSelect} />
+    <div ref={drag} style={{ opacity: isDragging ? 0 : 1, width: applyZoom(185,zoom) }}>
+      <LessonBox lessonName={lesson.name} teacherName={teacher.name} color={lesson.color} room={roomName} copyable={false} selectRoom={roomSelect} zoom={zoom} />
       <Modal visible={modalShown} title="Выбор кабинета" onCancel={() => setmodalShown(false)} footer={[
         <Button key="back" onClick={() => {
           setmodalShown(false)
-          dispatch(lessonRoomAdded({ lessonI: i.lessonI, dayI: i.dayI, studentId: i.studentId, roomName: null }))
+          setRoom({ i: i, room: null })
         }} type='dashed'>
           Без кабинета
         </Button>,
@@ -56,7 +63,7 @@ export const DraggableLessonBox = React.memo(({ lesson, teacher, roomName, i }) 
       ]}>
         {roomNames && roomNames.map(room => {
           return <Button key={room.name} shape='circle' style={{ margin: '4pt' }} disabled={!room.available} onClick={() => {
-            dispatch(lessonRoomAdded({ lessonI: i.lessonI, dayI: i.dayI, studentId: i.studentId, roomName: room.name }))
+            setRoom({ i: i, room: room.name })
             setmodalShown(false)
           }}>
             {room.name}

@@ -1,10 +1,8 @@
-import { Button, Steps, Form, Input, Cascader } from 'antd';
 import React, { useState } from 'react';
 import { nanoid } from '@reduxjs/toolkit';
 import { FirstLessonCreator, SecondLessonCreator, ThirdCreator } from './CreateLesson';
 import { useParams } from 'react-router-dom';
 import { useGetEditorDataQuery } from '../../api/apiSlice';
-const { Step } = Steps;
 
 export const FirstTeacherCreator = ({ result }) => {
   const formRef = React.createRef();
