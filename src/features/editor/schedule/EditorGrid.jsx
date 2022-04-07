@@ -114,18 +114,8 @@ function Student(props) {
   const { studentId, dayI, allowedFields, studentI, data, recompute, classI, projectId, classNames, student, zoom } = props
 
   const schedule = data
-  const dispatch = useDispatch()
-  const [renameModalShown, setrenameModalShown] = useState(false);
-  const [form] = Form.useForm();
 
-  const [editButtonShown, seteditButtonShown] = useState(false);
   const [editFieldCount, editFieldCountResult] = useEditorLessonFieldCountMutation({
-    fixedCacheKey: 'editor-edit-field-count',
-  })
-  const [updateStudent, updateStudentResult] = useEditorUpdateStudentMutation({
-    fixedCacheKey: 'editor-edit-field-count',
-  })
-  const [deleteStudent, deleteStudentResult] = useEditorDeleteStudentMutation({
     fixedCacheKey: 'editor-edit-field-count',
   })
 
@@ -135,44 +125,17 @@ function Student(props) {
     });
   }, [schedule]);
 
-
   const addField = () => {
     editFieldCount({ dayI: dayI, studentId: studentId, add: true })
   }
   const removeField = () => {
     editFieldCount({ dayI: dayI, studentId: studentId, add: false })
   }
-  const showRenameModal = () => {
-    setrenameModalShown(true)
-  }
-  const hideRenameModal = () => {
-    setrenameModalShown(false)
-  }
-  const onSubmit = (values) => {
-    console.log(values);
-    updateStudent({ name: values.name, className: values.class1, studentId: studentId })
-    // dispatch(studentDetailsChanged({ name: values.name, className: values.class1, id: studentId }))
-    hideRenameModal()
-  }
-  const deleteButtonClicked = () => {
-    // dispatch(studentDeleted(studentId))
-    deleteStudent({ studentId: studentId })
-    hideRenameModal()
-  }
-  const classSelect = (
-    <Form.Item name="class1" noStyle rules={[{ required: true, message: 'Please select student\'s class' }]}>
-      <Select>
-        {classNames.map(c => <Option value={c}>{c}</Option>)}
-      </Select>
-    </Form.Item>
-  );
-
-  const bottomButtonStyle = { fontWeight: 'bold', marginTop: '-20pt', margin: '0 2pt' }
 
   return <div
     style={{ marginLeft: applyZoom(6, zoom), marginRight: applyZoom(6, zoom) }}
     key={student.id}>
-    <div
+    {/* <div
       style={{ paddingLeft: applyZoom(40, zoom) }}
       onMouseEnter={e => {
         seteditButtonShown(true)
@@ -188,51 +151,24 @@ function Student(props) {
         </Col>
         <Col><Button type="text" size='small' shape="round" style={editButtonShown ? {} : { opacity: '0' }} onClick={() => { showRenameModal() }} icon={<BiPencil />}></Button></Col>
       </Row>
-    </div>
+    </div> */}
 
 
 
-    {data.map((lesson, lessonI) => {
+    {/* {data.map((lesson, lessonI) => {
       return <div style={{ margin: `${applyZoom(8, zoom)} 0` }} key={lessonI}>
         {<Field {...props} i={{ dayI: dayI, classI: classI, studentI: studentI, studentId: student.id, lessonI: lessonI }} canPlace={allowedFields && allowedFields[lessonI]} recompute={recompute} lesson={lesson} />}
       </div>
-    })}
+    })} */}
 
 
 
-    <div style={{ padding: '10pt 0 4pt 0', marginTop: '-10pt' }}>
+    {/* <div style={{ padding: '10pt 0 4pt 0', marginTop: '-10pt' }}>
       <Button style={bottomButtonStyle} type="dashed" size='small' shape="round" onClick={() => { addField() }}>+</Button>
       <Button style={bottomButtonStyle} type="dashed" size='small' shape="round" onClick={() => { removeField() }}>-</Button>
-    </div>
+    </div> */}
 
-    <Modal
-      title="Параметры ученика"
-      visible={renameModalShown}
-      onCancel={hideRenameModal}
-      footer={[
-        <Button onClick={hideRenameModal}>
-          Отмена
-        </Button>,
-        <Button danger onClick={deleteButtonClicked}>
-          Удалить
-        </Button>,
-        <Button form={"editStudentForm-" + studentId} key="submit" htmlType="submit" type='primary'>
-          Сохранить
-        </Button>
-      ]}
-    >
-      <Form
-        orm={form}
-        id={"editStudentForm-" + studentId}
-        requiredMark={false}
-        onFinish={onSubmit}
-        initialValues={{ name: student.name, class1: student.className }}
-      >
-        <Form.Item label="Name" name="name" rules={[{ required: true, message: 'Пожалуйста введите имя ученика' }]} >
-          <Input autoComplete="off" addonAfter={classSelect} placeholder="Name" style={{ width: '100%' }} />
-        </Form.Item>
-      </Form>
-    </Modal>
+    
   </div>
 }
 

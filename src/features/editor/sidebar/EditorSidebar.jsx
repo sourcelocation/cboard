@@ -5,7 +5,8 @@ import { useGetEditorDataQuery } from "../../api/apiSlice";
 import { LessonTeachers } from "./LessonTeachers";
 import { Button, Divider, Space } from "@mantine/core";
 import { NewStudentButton } from "./NewStudentButton";
-import { ExcelModal } from './ExcelGenerateButton'
+import { ExcelGenerateButton, ExcelModal } from './ExcelGenerateButton'
+
 export const EditorSidebar = (props) => {
   const { projectId } = props
   const { classes, avaliableLessons, teachers } = useGetEditorDataQuery(projectId, {
@@ -57,13 +58,9 @@ export const EditorSidebar = (props) => {
           Add teacher
         </Button>
       </Link>
+
       <NewStudentButton {...props} />
-      <Button type='primary' block style={{ marginBottom: '8pt' }} onClick={showExportModal}>
-        Export to Excel
-      </Button>
-
-
-      <ExcelModal {...props} set={setexportModalShown} shown={exportModalShown} projectId={projectId} />
+      <ExcelGenerateButton {...props} />
     </div>
   )
 }

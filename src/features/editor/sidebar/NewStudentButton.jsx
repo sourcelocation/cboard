@@ -1,13 +1,13 @@
-import { Button, Popover, useMantineTheme } from "@mantine/core";
+import { Anchor, Button, Group, Popover, TextInput, useMantineTheme } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { nanoid } from "@reduxjs/toolkit";
 import { useState } from "react";
 import { useEditorAddStudentMutation, useGetEditorDataQuery } from "../../api/apiSlice";
 
 export function NewStudentButton(props) {
   const { projectId } = props
-  const [values, setValues] = useState({ name: 'Bob Handsome', email: 'bob@handsome.inc' });
+  const [values, setValues] = useState({ name: '', email: '' });
   const [opened, setOpened] = useState(false);
-  const theme = useMantineTheme();
   const [addStudent, addStudentResult] = useEditorAddStudentMutation()
 
   const { classes } = useGetEditorDataQuery(projectId, {
@@ -23,10 +23,10 @@ export function NewStudentButton(props) {
       position="bottom"
       placement="end"
       withCloseButton
-      title="Edit user"
-      transition="pop-top-right"
+      title="New student"
+      // transition="pop-top-right"
       target={
-        <Button variant="light">
+        <Button variant="light" onClick={() => setOpened((o) => !o)}>
           New student
         </Button>
       }
@@ -49,8 +49,6 @@ export function NewStudentButton(props) {
 }
 
 function StudentAddForm({ initialValues, onSubmit, onCancel }) {
-  const isMobile = useMediaQuery('(max-width: 755px');
-
   const form = useForm({
     initialValues,
     validationRules: {
@@ -65,7 +63,7 @@ function StudentAddForm({ initialValues, onSubmit, onCancel }) {
         required
         label="Name"
         placeholder="Name"
-        style={{ minWidth: isMobile ? 220 : 300 }}
+        style={{ minWidth: 300 }}
         value={form.values.name}
         onChange={(event) => form.setFieldValue('name', event.currentTarget.value)}
         error={form.errors.name}
@@ -76,7 +74,7 @@ function StudentAddForm({ initialValues, onSubmit, onCancel }) {
         required
         label="Email"
         placeholder="Email"
-        style={{ minWidth: isMobile ? 220 : 300, marginTop: 15 }}
+        style={{ minWidth: 300, marginTop: 15 }}
         value={form.values.email}
         onChange={(event) => form.setFieldValue('email', event.currentTarget.value)}
         error={form.errors.email}

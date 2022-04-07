@@ -1,8 +1,10 @@
 import { Group, Button } from '@mantine/core';
-import { showNotification } from '@mantine/notifications';
+import { showNotification, updateNotification } from '@mantine/notifications';
 import { useState } from 'react';
+import { authHeader } from '../../../services/auth-header'
+import { Check } from 'tabler-icons-react'
 
-export const ExcelGenerateButton = ({ set, shown, projectId, orgId }) => {
+export const ExcelGenerateButton = ({ projectId }) => {
   const [generatedUrl, setgeneratedUrl] = useState(false)
 
   async function generate() {
@@ -30,7 +32,7 @@ export const ExcelGenerateButton = ({ set, shown, projectId, orgId }) => {
       color: 'primary',
       title: 'Successfully generated!',
       message: 'The download will now start',
-      icon: <CheckIcon />,
+      icon: <Check />,
       autoClose: 2000,
     });
   }
