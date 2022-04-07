@@ -1,4 +1,4 @@
-import { ActionIcon, Divider, Loader, SimpleGrid, Title } from '@mantine/core';
+import { ActionIcon, Divider, Loader, SimpleGrid, Space, Title } from '@mantine/core';
 import { Link } from "react-router-dom";
 import { useAddProjectMutation, useOrganizationQuery } from '../api/apiSlice'
 import { Plus } from 'tabler-icons-react';
@@ -17,10 +17,8 @@ export default function DashboardPage() {
   return (
     <div style={{ margin: '8px 40px' }}>
       <div style={{ display: 'flex', justifyContent: 'start', alignItems: 'center' }}>
-      <Title order={2}>Projects</Title>
-        {/* <Button radius={100000} compact style={{ margin: '-8pt 0 0 8pt', width: '24px', height: '24px' }} onClick={() => {
-          addProject({ name: "New Project " + nanoid()[0] })
-        }}>+</Button> */}
+        <Title order={2}>Projects</Title>
+        <Space w="md" />
         <ActionIcon variant="filled" color="primary" size="sm">
           <Plus size={16} />
         </ActionIcon>

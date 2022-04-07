@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
-import { EditorSidebar } from './EditorSidebar.jsx';
+import { EditorSidebar } from './sidebar/EditorSidebar.jsx';
 import './Editor.css'
 import EditorSchedule from './schedule/EditorSchedule.jsx';
 import { useParams } from 'react-router-dom';

@@ -9,6 +9,8 @@ import { AutoSizer } from 'react-virtualized'
 import { RenderGrid } from "./EditorGrid";
 import { ItemTypes } from "../Editor";
 import { useGetEditorDataQuery } from "../../api/apiSlice";
+import { useForm } from '@mantine/form';
+import { Loader, NumberInput } from "@mantine/core";
 
 export default function EditorSchedule(props) {
   const dragDropManager = useDragDropManager()
@@ -31,7 +33,6 @@ export default function EditorSchedule(props) {
   const [zoom, setZoom] = useState(100)
 
   const [modalShown, setmodalShown] = useState(false)
-  const [form] = Form.useForm();
   const dispatch = useDispatch()
 
   const [{ }, drop] = useDrop(() => ({
@@ -48,21 +49,6 @@ export default function EditorSchedule(props) {
       }
     }
   }))
-
-  const onSubmit = (values) => {
-    form.resetFields()
-    console.log(values);
-    dispatch(dayAdded())
-    dispatch(addDay(values.name))
-    setmodalShown(false)
-  }
-
-  const onZoomChange = (v) => {
-    console.log(v);
-  }
-  const onPanChange = (v) => {
-    console.log(v);
-  }
 
   useEffect(() => monitor.subscribeToStateChange(() => {
     if (scheduleData) {
@@ -105,33 +91,13 @@ export default function EditorSchedule(props) {
           />
         )}
       </AutoSizer>
-      <Modal
-        title="Добавить день"
-        visible={modalShown}
-        onCancel={() => { setmodalShown(false) }}
-        footer={[
-          <Button onClick={() => { setmodalShown(false) }}>
-            Отмена
-          </Button>,
-          <Button form="createDayForm" key="submit" htmlType="submit" type='primary'>
-            Добавить
-          </Button>
-        ]}
-      >
-        <Form id="createDayForm" form={form} requiredMark={false} onFinish={onSubmit}>
-          <Form.Item label="Name" name="name" rules={[{ required: true }]} >
-            <Input autoComplete="off" placeholder="Напр. Суббота" />
-          </Form.Item>
-        </Form>
-      </Modal>
     </div>) : (
-      <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
+      <Loader />
     )
   )
 }
-const ZoomSelect = ({setZoom}) => {
+const ZoomSelect = ({ setZoom }) => {
   return (
-    // <Input a size='small' style={{width: '150px'}}/>
-    <InputNumber min={1} max={100} addonAfter="%" defaultValue={100} size='small' onChange={setZoom} style={{width: '80px'}} controls={false} />
+    <NumberInput min={1} max={100} addonAfter="%" defaultValue={100} size='small' onChange={setZoom} style={{ width: '80px' }} controls={false} />
   )
 }
