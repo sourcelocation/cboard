@@ -9,6 +9,8 @@ import { useDrop } from 'react-dnd';
 import { ItemTypes } from '../Editor';
 import { applyZoom, DraggableLessonBox } from '../lessons/box/DraggableLessonBox';
 import { useEditorCopyLessonMutation, useEditorDeleteStudentMutation, useEditorLessonFieldCountMutation, useEditorMoveLessonMutation, useEditorUpdateStudentMutation, useGetEditorDataQuery } from '../../api/apiSlice';
+import { EditStudentButton } from './student/StudentEditButton';
+import { Group } from '@mantine/core';
 
 const cache = new CellMeasurerCache({
   defaultWidth: 1000,
@@ -63,8 +65,6 @@ function cellRenderer(props) {
     parent,
     rowIndex,
     style,
-    recompute,
-    zoom
   } = props
 
   return (
@@ -85,14 +85,14 @@ function cellRenderer(props) {
 }
 
 function Class1(props) {
-  const { allowedFields, data, classI, students, zoom } = props
+  const { allowedFields, classI, data, students, zoom } = props
   const dayNames = useSelector(state => selectDays(state))
 
   return (
     <div style={{ display: 'flex', flexDirection: 'row', marginBottom: '30pt' }} key={props.dayI}>
       {classI === 0 && <h4 style={{ padding: '34pt 20pt', width: '100pt', color: 'black' }}>{dayNames[props.dayI]}</h4>}
       <div style={{ flex: 1, flexDirection: 'column', padding: '0 30pt 0 5pt' }}>
-        <h2 style={{ paddingRight: '0pt', fontSize: applyZoom(20, zoom) }}>{data.name}</h2>
+        <p style={{ paddingRight: '0pt', fontSize: applyZoom(20, zoom) }}>{data.name}</p>
         <div style={{ display: 'flex', flexDirection: 'row' }} key={data.name}>
           {Object.keys(data.students).map((studentId, studentI) => {
             return <Student
@@ -111,7 +111,7 @@ function Class1(props) {
   )
 }
 function Student(props) {
-  const { studentId, dayI, allowedFields, studentI, data, recompute, classI, projectId, classNames, student, zoom } = props
+  const { studentId, dayI, allowedFields, studentI, data, classI, projectId, classNames, student, zoom } = props
 
   const schedule = data
 
@@ -135,31 +135,24 @@ function Student(props) {
   return <div
     style={{ marginLeft: applyZoom(6, zoom), marginRight: applyZoom(6, zoom) }}
     key={student.id}>
-    {/* <div
-      style={{ paddingLeft: applyZoom(40, zoom) }}
-      onMouseEnter={e => {
-        seteditButtonShown(true)
-      }}
-      onMouseLeave={e => {
-        seteditButtonShown(false)
-      }}>
-      <Row justify="center">
-        <Col>
-          <p style={{ fontSize: applyZoom(15, zoom) }}>
-            {student.name}
-          </p>
-        </Col>
-        <Col><Button type="text" size='small' shape="round" style={editButtonShown ? {} : { opacity: '0' }} onClick={() => { showRenameModal() }} icon={<BiPencil />}></Button></Col>
-      </Row>
-    </div> */}
+    <div style={{ paddingLeft: applyZoom(40, zoom) }}>
+      <Group>
+        <p style={{ fontSize: applyZoom(15, zoom) }}>
+          {student.name}
+        </p>
+        <EditStudentButton student={student} />
+      </Group>
+    </div>
 
 
 
-    {/* {data.map((lesson, lessonI) => {
-      return <div style={{ margin: `${applyZoom(8, zoom)} 0` }} key={lessonI}>
-        {<Field {...props} i={{ dayI: dayI, classI: classI, studentI: studentI, studentId: student.id, lessonI: lessonI }} canPlace={allowedFields && allowedFields[lessonI]} recompute={recompute} lesson={lesson} />}
-      </div>
-    })} */}
+    {
+      data.map((lesson, lessonI) => {
+        return <div style={{ margin: `${applyZoom(8, zoom)} 0` }} key={lessonI}>
+          {<Field {...props} i={{ dayI: dayI, classI: classI, studentI: studentI, studentId: student.id, lessonI: lessonI }} canPlace={allowedFields && allowedFields[lessonI]} lesson={lesson} />}
+        </div>
+      })
+    }
 
 
 
@@ -168,8 +161,8 @@ function Student(props) {
       <Button style={bottomButtonStyle} type="dashed" size='small' shape="round" onClick={() => { removeField() }}>-</Button>
     </div> */}
 
-    
-  </div>
+
+  </div >
 }
 
 const fieldStyle = (zoom) => ({
@@ -187,18 +180,6 @@ export const Field = React.memo(function Field(props) {
   const { i, canPlace, projectId, teachers, lessons, lesson: fieldLesson, zoom } = props
   const lesson = lessons[fieldLesson?.lessonId]
   const teacher = teachers[fieldLesson?.teacherId]
-  // const { lesson, teacher } = useGetEditorDataQuery(projectId, {
-  //   selectFromResult: ({ data }) => ({
-  //     lesson: (() => {
-  //       const lesson = data.students.entities[i.studentId].schedule[i.dayI][i.lessonI]
-  //       return (lesson ? data.lessons.entities[lesson.lessonId] : null)
-  //     })(),
-  //     teacher: (() => {
-  //       const lesson = data.students.entities[i.studentId].schedule[i.dayI][i.lessonI]
-  //       return (lesson ? data.teachers.entities[lesson.teacherId] : null)
-  //     })()
-  //   }),
-  // })
 
   const lessonId = lesson?.id
   const teacherId = lesson?.id
@@ -243,7 +224,7 @@ export const Field = React.memo(function Field(props) {
     }
   }), [canPlace, i])
 
-  let divStyle = { border: '1px dashed lightgray' }
+  let divStyle = { border: '1px solid #E8E8E8' }
   if (canPlace !== null && !lessonId) {
     if (!canPlace) {
       divStyle = { border: (isOver ? '1px solid red' : '1px solid #ffccc7'), backgroundColor: '#fff1f0' }

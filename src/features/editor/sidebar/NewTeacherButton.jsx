@@ -4,7 +4,7 @@ import { nanoid } from "@reduxjs/toolkit";
 import { useState } from "react";
 import { useEditorAddStudentMutation, useGetEditorDataQuery } from "../../api/apiSlice";
 
-export function NewStudentButton(props) {
+export function NewTeacherButton(props) {
   const { projectId } = props
   const [values, setValues] = useState({ name: '', email: '' });
   const [opened, setOpened] = useState(false);
@@ -26,13 +26,13 @@ export function NewStudentButton(props) {
       title="New student"
       // transition="pop-top-right"
       target={
-          <Button variant="light" onClick={() => setOpened((o) => !o)} style={{ width: '100%' }}>
-            New student
-          </Button>
+        <Button variant="light" onClick={() => setOpened((o) => !o)} style={{ width: '100%' }}>
+          New teacher
+        </Button>
       }
       style={{ width: '100%' }}
     >
-      <StudentAddForm
+      <TeacherAddForm
         initialValues={values}
         onCancel={() => setOpened(false)}
         onSubmit={(data) => {
@@ -49,7 +49,7 @@ export function NewStudentButton(props) {
   );
 }
 
-function StudentAddForm({ initialValues, onSubmit, onCancel }) {
+function TeacherAddForm({ initialValues, onSubmit, onCancel }) {
   const form = useForm({
     initialValues,
     validationRules: {

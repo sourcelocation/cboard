@@ -3,9 +3,11 @@ import { useState } from "react";
 import { nanoid } from "@reduxjs/toolkit";
 import { useGetEditorDataQuery } from "../../api/apiSlice";
 import { LessonTeachers } from "./LessonTeachers";
-import { Button, Divider, Space } from "@mantine/core";
+import { Button, Divider, Group, Space, Stack, Container } from "@mantine/core";
 import { NewStudentButton } from "./NewStudentButton";
 import { ExcelGenerateButton, ExcelModal } from './ExcelGenerateButton'
+import { NewLessonButton } from "./NewLessonButton";
+import { NewTeacherButton } from "./NewTeacherButton";
 
 export const EditorSidebar = (props) => {
   const { projectId } = props
@@ -33,34 +35,22 @@ export const EditorSidebar = (props) => {
   }
 
   return (
-    <div style={{ height: 'calc(100vh - 54pt)', width: '160pt', overflowY: 'scroll', marginTop: '0pt' }} className="available-lessons-content">
-      <div>
-        {/* {avaliableLessons && <Search allowClear placeholder="Поиск" />} */}
+    <div style={{ height: 'calc(100vh - 54px)', width: '213px', overflowY: 'scroll', marginTop: '0pt' }} className="available-lessons-content">
+      <Stack spacing="sm" style={{margin: '10px'}}>
+        <Stack>
         {avaliableLessons.map((lesson) => (
           <LessonTeachers lesson={lesson} key={lesson.id} teachers={teachers} />
         ))}
-
-      </div>
-      <Link to={`/editor/${projectId}/configure`} >
-        <Button block style={{ marginTop: '10pt', marginBottom: '-2pt' }} type='default'>
-          Settings
-        </Button>
-      </Link>
-      <Divider />
-      {/* <Space h={} */}
-      <Link to={`/editor/${projectId}/newLesson`} >
-        <Button block style={{ marginBottom: '8pt' }} type='dashed'>
-          Add lesson
-        </Button>
-      </Link>
-      <Link to={`/editor/${projectId}/newTeacher`} >
-        <Button block style={{ marginBottom: '8pt' }} type='dashed'>
-          Add teacher
-        </Button>
-      </Link>
-
-      <NewStudentButton {...props} />
-      <ExcelGenerateButton {...props} />
+      </Stack>
+        <Divider />
+        <NewLessonButton {...props} />
+        <NewTeacherButton {...props} />
+        <NewStudentButton {...props} />
+        <Group position="center">
+          <ExcelGenerateButton {...props} />
+          <ExcelGenerateButton {...props} />
+        </Group>
+      </Stack>
     </div>
   )
 }

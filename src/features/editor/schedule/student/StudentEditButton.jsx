@@ -12,19 +12,16 @@ import {
 } from '@mantine/core';
 import { useForm, useMediaQuery } from '@mantine/hooks';
 import { Edit } from 'tabler-icons-react';
+import { useEditorDeleteStudentMutation, useEditorUpdateStudentMutation } from 'features/api/apiSlice';
 
 function StudentEditForm({ initialValues, onSubmit, onCancel }) {
-  const isMobile = useMediaQuery('(max-width: 755px');
-
   const [updateStudent, updateStudentResult] = useEditorUpdateStudentMutation({
-    fixedCacheKey: 'editor-edit-field-count',
+    fixedCacheKey: 'editor-edit-student',
   })
   const [deleteStudent, deleteStudentResult] = useEditorDeleteStudentMutation({
-    fixedCacheKey: 'editor-edit-field-count',
+    fixedCacheKey: 'editor-delete-student',
   })
 
-  //{classNames.map(c => <Option value={c}>{c}</Option>)}
-  //deleteStudent({ studentId: studentId })
   const form = useForm({
     initialValues,
     validationRules: {
@@ -34,12 +31,15 @@ function StudentEditForm({ initialValues, onSubmit, onCancel }) {
   });
 
   return (
-    <form onSubmit={form.onSubmit(onSubmit)}>
+    <form onSubmit={form.onSubmit((v) => {
+      onSubmit(v)
+
+    })}>
       <TextInput
         required
         label="Name"
         placeholder="Name"
-        style={{ minWidth: isMobile ? 220 : 300 }}
+        style={{ minWidth: 300 }}
         value={form.values.name}
         onChange={(event) => form.setFieldValue('name', event.currentTarget.value)}
         error={form.errors.name}
@@ -48,9 +48,9 @@ function StudentEditForm({ initialValues, onSubmit, onCancel }) {
 
       <TextInput
         required
-        label="Email"
-        placeholder="Email"
-        style={{ minWidth: isMobile ? 220 : 300, marginTop: 15 }}
+        label="Class"
+        placeholder="Class, grade, etc."
+        style={{ minWidth: 300, marginTop: 15 }}
         value={form.values.email}
         onChange={(event) => form.setFieldValue('email', event.currentTarget.value)}
         error={form.errors.email}
@@ -69,8 +69,7 @@ function StudentEditForm({ initialValues, onSubmit, onCancel }) {
   );
 }
 
-export function EditStudentButton() {
-  const [values, setValues] = useState({ name: 'Bob Handsome', email: 'bob@handsome.inc' });
+export function EditStudentButton({ student }) {
   const [opened, setOpened] = useState(false);
   const theme = useMantineTheme();
 
@@ -79,10 +78,10 @@ export function EditStudentButton() {
       opened={opened}
       onClose={() => setOpened(false)}
       position="bottom"
-      placement="end"
+      placement='start'
       withCloseButton
       title="Edit user"
-      transition="pop-top-right"
+      transition="pop-top-left"
       target={
         <ActionIcon
           variant={'light'}
@@ -93,10 +92,9 @@ export function EditStudentButton() {
       }
     >
       <StudentEditForm
-        initialValues={values}
+        initialValues={student}
         onCancel={() => setOpened(false)}
         onSubmit={(data) => {
-          setValues(data);
           setOpened(false);
         }}
       />

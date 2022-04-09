@@ -47,7 +47,6 @@ function App() {
                 ]
               }
             }}
-            emotionOptions={{ key: 'mantine', prepend: false }}
           >
             <Routes>
               <Route path="/login" element={<Login />} />

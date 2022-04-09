@@ -1,4 +1,4 @@
-import { TextInput, Checkbox, Button, Group, Box, PasswordInput } from '@mantine/core';
+import { TextInput, Checkbox, Button, Group, Box, PasswordInput, Space } from '@mantine/core';
 import { useForm } from '@mantine/form';
 
 import { useNavigate } from "react-router-dom";
@@ -40,9 +40,10 @@ export default function Login() {
   return (
     <div style={{ display: 'flex', justifyContent: 'center', height: '100vh', alignItems: 'center' }}>
       <div style={{ width: '50%', display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
-        <img src={CboardIconSimple} style={{ display: 'flex', width: '50px', marginBottom: '8px' }} />
-        <h1 class="">Log in</h1>
-        <p style={{ color: '#AAAAAA', marginTop: '-10px', marginBottom: '32px' }}>Use your email and password to log in back into your account</p>
+        <img src={CboardIconSimple} style={{ display: 'flex', width: '50px' }} />
+        {/* <Space h='sm' /> */}
+        <h2>Log in</h2>
+        <p style={{ color: '#AAAAAA', marginTop: '-10px', marginBottom: '32px', textAlign: 'center' }}>Use your email and password to log in back into your account</p>
         <Box sx={{ minWidth: '50%' }} mx="auto">
           <form onSubmit={form.onSubmit(onFinish)} >
             <TextInput
