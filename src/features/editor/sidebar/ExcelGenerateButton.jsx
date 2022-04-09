@@ -39,8 +39,7 @@ export const ExcelGenerateButton = ({ projectId }) => {
 
   return (
     <ActionIcon variant="light" onClick={generate} color="primary">
-      {/* <Button  style={{ width: '100%' }}> */}
-    <FileExport size={16} />
+      <FileExport size={16} />
     </ActionIcon>
   )
 }

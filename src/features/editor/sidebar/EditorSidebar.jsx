@@ -3,11 +3,12 @@ import { useState } from "react";
 import { nanoid } from "@reduxjs/toolkit";
 import { useGetEditorDataQuery } from "../../api/apiSlice";
 import { LessonTeachers } from "./LessonTeachers";
-import { Button, Divider, Group, Space, Stack, Container } from "@mantine/core";
+import { Button, Divider, Group, Space, Stack, Container, ActionIcon } from "@mantine/core";
 import { NewStudentButton } from "./NewStudentButton";
 import { ExcelGenerateButton, ExcelModal } from './ExcelGenerateButton'
 import { NewLessonButton } from "./NewLessonButton";
 import { NewTeacherButton } from "./NewTeacherButton";
+import { AlertTriangle, Send, Settings, Users } from "tabler-icons-react";
 
 export const EditorSidebar = (props) => {
   const { projectId } = props
@@ -36,19 +37,27 @@ export const EditorSidebar = (props) => {
 
   return (
     <div style={{ height: 'calc(100vh - 54px)', width: '213px', overflowY: 'scroll', marginTop: '0pt' }} className="available-lessons-content">
-      <Stack spacing="sm" style={{margin: '10px'}}>
+      <Stack spacing="sm" style={{ margin: '10px' }}>
         <Stack>
-        {avaliableLessons.map((lesson) => (
-          <LessonTeachers lesson={lesson} key={lesson.id} teachers={teachers} />
-        ))}
-      </Stack>
+          {avaliableLessons.map((lesson) => (
+            <LessonTeachers lesson={lesson} key={lesson.id} teachers={teachers} />
+          ))}
+        </Stack>
         <Divider />
         <NewLessonButton {...props} />
         <NewTeacherButton {...props} />
         <NewStudentButton {...props} />
         <Group position="center">
           <ExcelGenerateButton {...props} />
-          <ExcelGenerateButton {...props} />
+          <ActionIcon variant="light" color="primary">
+            <Settings size={16} />
+          </ActionIcon>
+          <ActionIcon variant="light" color="primary">
+            <Users size={16} />
+          </ActionIcon>
+          <ActionIcon variant='filled' color="primary">
+            <Send size={16} />
+          </ActionIcon>
         </Group>
       </Stack>
     </div>
