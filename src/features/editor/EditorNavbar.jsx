@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { useOrganizationQuery, websocketConnection } from '../api/apiSlice'
 import logo from './../../images/CboardFile.png'
 import { BsCloudCheck, BsCloudSlash, BsCloudMinus } from 'react-icons/bs'
-import { Loader } from 'tabler-icons-react'
+import { Loader } from '@mantine/core'
 
 export const EditorNavbar = ({ setZoom }) => {
   const params = useParams()

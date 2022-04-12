@@ -1,16 +1,14 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { EditorSidebar } from './sidebar/EditorSidebar.jsx';
 import './Editor.css'
-import EditorSchedule from './schedule/EditorSchedule.jsx';
 import { useParams } from 'react-router-dom';
-import { store } from '../../app/store'
-import { apiSlice } from '../api/apiSlice.js';
+import EditorSchedule from './schedule/EditorGrid.jsx';
 
 const editor = {
   display: 'flex',
-  height: 'calc(100vh - 110px)'
+  height: 'calc(100vh - 110px)',
 }
 export const ItemTypes = {
   BOX: 'box'
@@ -22,7 +20,7 @@ export default function Editor(props) {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div style={editor} >
+      <div style={editor}>
         <EditorSchedule {...props} projectId={id} />
         <EditorSidebar projectId={id} />
       </div>

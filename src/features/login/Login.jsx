@@ -81,7 +81,7 @@ export default function Login() {
         </Box>
       </div>
       <div style={{ backgroundColor: '#7F7BFF', width: '50%', display: 'flex', height: '100%', justifyContent: 'flex-end', alignItems: 'center' }}>
-        <img src={LoginSideImage} style={{ maxHeight: 'calc(100% - 0px)', maxWidth: 'calc(100% - 0px)' }} />
+        <img src={LoginSideImage} style={{ maxHeight: '100%', maxWidth: '100%' }} />
       </div>
     </div>
   );

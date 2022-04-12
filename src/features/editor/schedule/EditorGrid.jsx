@@ -1,16 +1,18 @@
 import React, { useEffect } from 'react';
 import { CellMeasurer, CellMeasurerCache, Grid } from 'react-virtualized';
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { lessonFieldAdded, lessonFieldDeleted, lessonSet, selectAllClasses, selectLessonByI, studentDeleted, studentDetailsChanged } from "../students/studentSlice";
-import { BiPencil } from 'react-icons/bi';
+import { useSelector } from "react-redux";
+import { transformStudentsToScheduleData } from "../students/studentSlice";
 import { selectDays } from './scheduleInfoSlice';
-import { useDrop } from 'react-dnd';
+import { useDragDropManager, useDrop } from 'react-dnd';
 import { ItemTypes } from '../Editor';
 import { applyZoom, DraggableLessonBox } from '../lessons/box/DraggableLessonBox';
-import { useEditorCopyLessonMutation, useEditorDeleteStudentMutation, useEditorLessonFieldCountMutation, useEditorMoveLessonMutation, useEditorUpdateStudentMutation, useGetEditorDataQuery } from '../../api/apiSlice';
+import { useEditorCopyLessonMutation, useEditorLessonFieldCountMutation, useEditorMoveLessonMutation, useGetEditorDataQuery } from '../../api/apiSlice';
 import { EditStudentButton } from './student/StudentEditButton';
-import { Group } from '@mantine/core';
+import { createStyles, Group, Loader, NumberInput } from '@mantine/core';
+import { AutoSizer } from 'react-virtualized';
+import { cloneDeep } from "lodash";
+import { getPlacements } from '../lessons/logic';
 
 const cache = new CellMeasurerCache({
   defaultWidth: 1000,
@@ -19,7 +21,95 @@ const cache = new CellMeasurerCache({
   minHeight: 20,
 });
 
-export class RenderGrid extends React.Component {
+export default function EditorSchedule(props) {
+  const dragDropManager = useDragDropManager()
+  const monitor = dragDropManager.getMonitor();
+  const projectId = props.projectId
+
+  const { scheduleData, students, classNames, teachers, lessons } = useGetEditorDataQuery(projectId, {
+    selectFromResult: ({ data }) => ({
+      scheduleData: data ? transformStudentsToScheduleData(Object.values(data.students.entities)) : [[], [], [], [], []],
+
+      students: data ? data.students.entities : [],
+      teachers: data ? data.teachers.entities : [],
+      lessons: data ? data.lessons.entities : [],
+
+      classNames: data ? Array.from(new Set(Object.values(data.students.entities).map(s => s.className))) : [],
+    }),
+  })
+
+  const [allowedFields, setallowedFields] = useState(null)
+  const [zoom, setZoom] = useState(100)
+
+  const [{ }, drop] = useDrop(() => ({
+    accept: ItemTypes.BOX,
+    drop: (item, monitor) => {
+      const didDrop = monitor.didDrop();
+      if (didDrop) {
+        return
+      }
+      const { lessonId, teacherId, i } = monitor.getItem()
+
+      if (i) {
+        // TODO: Delete lesson
+      }
+    }
+  }))
+
+  useEffect(() => monitor.subscribeToStateChange(() => {
+    if (scheduleData) {
+      const item = monitor.getItem()
+
+      if (item && !allowedFields) {
+        const i = item.i
+        const modified = cloneDeep(scheduleData)
+        if (i) {
+          modified[i.dayI][i.classI].students[i.studentId][i.lessonI] = null
+        }
+        const res = getPlacements(item, modified)
+        setallowedFields(res)
+      } else if (!item) {
+        setallowedFields(null)
+      }
+    }
+  }), [scheduleData, allowedFields])
+
+  return (
+    !!scheduleData ? (<div style={{ width: '100%', backgroundColor: '#F7F7F7' }} ref={drop}>
+      <section style={{ display: 'flex', padding: '6pt 8pt', alignItems: 'center', justifyContent: 'flex-end' }}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <ZoomSelect setZoom={setZoom} />
+        </div>
+      </section>
+      <AutoSizer>
+        {({ height, width }) => (
+          <RenderGrid
+            {...props}
+            allowedFields={allowedFields}
+            classNames={classNames}
+            data={scheduleData}
+            height={height}
+            lessons={lessons}
+            students={students}
+            teachers={teachers}
+            width={width}
+            zoom={zoom}
+          />
+        )}
+      </AutoSizer>
+    </div>) : (
+      <Loader />
+    )
+  )
+}
+
+const ZoomSelect = ({ setZoom }) => {
+  return (
+    <NumberInput min={1} max={100} addonAfter="%" defaultValue={100} size='small' onChange={setZoom} style={{ width: '80px' }} controls={false} />
+  )
+}
+
+class RenderGrid extends React.Component {
   constructor(props) {
     super(props);
     this.gridRef = React.createRef();
@@ -164,27 +254,27 @@ function Student(props) {
 
   </div >
 }
-
-const fieldStyle = (zoom) => ({
-  backgroundColor: '#FFFFFF',
-  borderRadius: '6pt',
-  textAlign: 'center',
-  width: applyZoom(180, zoom),
-  height: applyZoom(60, zoom),
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center'
-})
+const useStyles = createStyles((theme, { zoom, isOver }) => ({
+  field: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: theme.radius.md,
+    textAlign: 'center',
+    width: applyZoom(180, zoom),
+    height: applyZoom(60, zoom),
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  }
+}))
 
 export const Field = React.memo(function Field(props) {
   const { i, canPlace, projectId, teachers, lessons, lesson: fieldLesson, zoom } = props
+  const { classes } = useStyles({ zoom });
   const lesson = lessons[fieldLesson?.lessonId]
   const teacher = teachers[fieldLesson?.teacherId]
 
   const lessonId = lesson?.id
   const teacherId = lesson?.id
-
-  const dispatch = useDispatch()
 
   const [moveLesson, moveLessonResult] = useEditorMoveLessonMutation({
     fixedCacheKey: 'editor-move-lesson',
@@ -209,9 +299,7 @@ export const Field = React.memo(function Field(props) {
         moveLesson({ toI: i, fromI: fromI, projectId: projectId })
       } else {
         copyLesson({ toI: i, lessonId: lessonId, teacherId: teacherId, projectId: projectId })
-        // dispatch(lessonSet({ i: i, lesson: { lessonId: lessonId, teacherId: teacherId } }))
       }
-      // return ({ item: item, i: i })
     },
     canDrop: () => {
       return true
@@ -232,11 +320,10 @@ export const Field = React.memo(function Field(props) {
       divStyle = { border: isOver ? '1px solid #bae637' : '1px solid #B1B2B6', ...(isOver && { backgroundColor: '#f6ffed' }) }
     }
   }
-  console.log(`calc(130pt * ${zoom})`);
   const isDraggingThis = dragged && dragged.i && dragged.i.dayI == i.dayI && dragged.i.studentId == i.studentId && dragged.i.lessonI == i.lessonI
 
   if (!lesson || lessonId === undefined) {
-    return <div style={{ ...fieldStyle(zoom), ...(divStyle) }} ref={drop}></div>
+    return <div className={classes.field} ref={drop}></div>
   } else {
     return (
       <div
