@@ -254,7 +254,7 @@ function Student(props) {
 
   </div >
 }
-const useStyles = createStyles((theme, { zoom, isOver }) => ({
+const useStyles = createStyles((theme, { zoom, canPlace, isDraggingLesson, isOver }) => ({
   field: {
     backgroundColor: '#FFFFFF',
     borderRadius: theme.radius.md,
@@ -264,6 +264,16 @@ const useStyles = createStyles((theme, { zoom, isOver }) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    outline: 'none',
+    border: canPlace === undefined ? (
+      '1px solid #E8E8E8'
+    ) : (
+      isDraggingLesson ? (canPlace ? 
+        (isOver ? '1px solid #bae637' : '1px solid #B1B2B6') // Green
+        :
+        (isOver ? '1px solid red' : '1px solid #ffccc7') // Red
+        ) : '1px solid #E8E8E8'
+    )
   }
 }))
 
@@ -323,7 +333,7 @@ export const Field = React.memo(function Field(props) {
   const isDraggingThis = dragged && dragged.i && dragged.i.dayI == i.dayI && dragged.i.studentId == i.studentId && dragged.i.lessonI == i.lessonI
 
   if (!lesson || lessonId === undefined) {
-    return <div className={classes.field} ref={drop}></div>
+    return <button className={classes.field} ref={drop}></button>
   } else {
     return (
       <div

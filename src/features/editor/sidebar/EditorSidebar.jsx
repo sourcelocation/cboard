@@ -3,12 +3,13 @@ import { useState } from "react";
 import { nanoid } from "@reduxjs/toolkit";
 import { useGetEditorDataQuery } from "../../api/apiSlice";
 import { LessonTeachers } from "./LessonTeachers";
-import { Button, Divider, Group, Space, Stack, Container, ActionIcon, createStyles } from "@mantine/core";
+import { Button, Divider, Group, Space, Stack, Container, ActionIcon, createStyles, Chips, Chip } from "@mantine/core";
 import { NewStudentButton } from "./NewStudentButton";
 import { ExcelGenerateButton, ExcelModal } from './ExcelGenerateButton'
 import { NewLessonButton } from "./NewLessonButton";
 import { NewTeacherButton } from "./NewTeacherButton";
 import { AlertTriangle, Send, Settings, Users } from "tabler-icons-react";
+import { EditorLessonBoxCreator } from "./EditorLessonBoxCreator";
 
 const useStyles = createStyles((theme, _params, getRef) => ({
   sidebar: {
@@ -44,7 +45,9 @@ export const EditorSidebar = (props) => {
             <LessonTeachers lesson={lesson} key={lesson.id} teachers={teachers} />
           ))}
         </Stack>
-        <Divider />
+        <Group className={classes.sidebarSection}>
+          <EditorLessonBoxCreator />
+        </Group>
         <Group position="center" className={classes.sidebarSection}>
           <NewLessonButton {...props} />
           <NewTeacherButton {...props} />
