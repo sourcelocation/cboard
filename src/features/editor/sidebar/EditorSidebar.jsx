@@ -13,8 +13,8 @@ import { EditorLessonBoxCreator } from "./EditorLessonBoxCreator";
 
 const useStyles = createStyles((theme, _params, getRef) => ({
   sidebar: {
-    height: '100%',
-    width: 300,
+    height: 'calc(100vh - 106px)',
+    width: 400,
     overflowY: 'scroll',
     padding: theme.spacing.md,
     backgroundColor: '#F7F7F7'

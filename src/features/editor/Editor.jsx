@@ -8,7 +8,7 @@ import EditorSchedule from './schedule/EditorGrid.jsx';
 
 const editor = {
   display: 'flex',
-  height: 'calc(100vh - 110px)',
+  height: 'calc(100vh - 74px)',
 }
 export const ItemTypes = {
   BOX: 'box'

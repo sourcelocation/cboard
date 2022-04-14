@@ -2,7 +2,7 @@ import { Group, Button, ActionIcon } from '@mantine/core';
 import { showNotification, updateNotification } from '@mantine/notifications';
 import { useState } from 'react';
 import { authHeader } from '../../../services/auth-header'
-import { Check, FileExport } from 'tabler-icons-react'
+import { Check, CloudDownload } from 'tabler-icons-react'
 
 export const ExcelGenerateButton = ({ projectId }) => {
   const [generatedUrl, setgeneratedUrl] = useState(false)
@@ -39,7 +39,7 @@ export const ExcelGenerateButton = ({ projectId }) => {
 
   return (
     <ActionIcon variant="light" onClick={generate} color="primary">
-      <FileExport size={16} />
+      <CloudDownload size={16} />
     </ActionIcon>
   )
 }

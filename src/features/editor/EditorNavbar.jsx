@@ -32,7 +32,7 @@ export const EditorNavbar = ({ setZoom }) => {
   }
 
   return (
-    <nav style={{ backgroundColor: '#fafafa', padding: '6px 6px', position: 'sticky', top: '0', border: '1px solid #f0f0f0' }}>
+    <nav style={{ backgroundColor: '#fafafa', padding: '6px 6px', position: 'sticky', top: '0', border: '1px solid #f0f0f0', height: '60px' }}>
       <section style={{ display: 'flex', padding: '0 8pt', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <Link to={!!localStorage.getItem('user-token') ? "/dashboard" : "/"} style={{ textDecoration: 'none' }}>

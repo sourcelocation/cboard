@@ -76,11 +76,11 @@ export default function EditorSchedule(props) {
 
   return (
     !!scheduleData ? (<div style={{ width: '100%', backgroundColor: '#F7F7F7' }} ref={drop}>
-      <section style={{ display: 'flex', padding: '6pt 8pt', alignItems: 'center', justifyContent: 'flex-end' }}>
+      {/* <section style={{ display: 'flex', padding: '6pt 8pt', alignItems: 'center', justifyContent: 'flex-end' }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <ZoomSelect setZoom={setZoom} />
         </div>
-      </section>
+      </section> */}
       <AutoSizer>
         {({ height, width }) => (
           <RenderGrid
@@ -103,11 +103,11 @@ export default function EditorSchedule(props) {
   )
 }
 
-const ZoomSelect = ({ setZoom }) => {
-  return (
-    <NumberInput min={1} max={100} addonAfter="%" defaultValue={100} size='small' onChange={setZoom} style={{ width: '80px' }} controls={false} />
-  )
-}
+// const ZoomSelect = ({ setZoom }) => {
+//   return (
+//     <NumberInput min={1} max={100} addonAfter="%" defaultValue={100} size='small' onChange={setZoom} style={{ width: '80px' }} controls={false} />
+//   )
+// }
 
 class RenderGrid extends React.Component {
   constructor(props) {
