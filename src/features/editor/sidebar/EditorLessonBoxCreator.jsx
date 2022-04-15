@@ -6,13 +6,6 @@ import { useEditorAddLessonMutation, useEditorAddTeacherMutation, useGetEditorDa
 export function EditorLessonBoxCreator() {
   const names = ["Mathematics", "Geography", "Biology", "Science", "Mathematics1", "Geography1", "Biology1", "Science1", "Mathematics2", "Geography2", "Biology2", "Science2",]
   const [selectedLessonName, setselectedLessonName] = useState(null)
-  const [addLesson, addLessonResult] = useEditorAddLessonMutation()
-  // { lessonId: lesson.id, name: lesson.name, color: lesson.color, teacherIds: lesson.teacherIds, addLessonAction: 'true' }
-  // Example lesson adding
-
-  // { teacherId: teacher.id, name: teacher.name, taughtLessons: teacher.taughtLessons ? teacher.taughtLessons : [{id: data.lesson.id}], addTeacherAction: 'true' }
-  // Add teacher
-  // Similar...
 
   return (
     <Grid grow style={{ width: '100%' }}>
@@ -22,11 +15,7 @@ export function EditorLessonBoxCreator() {
             <LessonBox name={name} selected={selectedLessonName === name} select={() => setselectedLessonName(name)} />
           )}
           <Space h='xs' />
-          <Button fullWidth variant="light" compact onClick={() => {
-
-          }}>
-            +
-          </Button>
+          <AddLessonTeacherButton isLesson />
         </Stack>
       </Grid.Col>
       <Grid.Col span={6}>
@@ -35,18 +24,14 @@ export function EditorLessonBoxCreator() {
             <LessonBox name={name} selected={selectedLessonName === name} select={() => setselectedLessonName(name)} />
           )}
           <Space h='xs' />
-          <Button fullWidth variant="light" compact onClick={() => {
-
-          }}>
-            +
-          </Button>
+          <AddLessonTeacherButton />
         </Stack>
       </Grid.Col>
     </Grid>
   )
 }
 
-const useStyles = createStyles((theme, { selected }) => ({
+const useLessonBoxStyles = createStyles((theme, { selected }) => ({
   button: {
     border: 'transparent',
     backgroundColor: selected ? theme.colors.main[6] : 'transparent',
@@ -72,7 +57,7 @@ const useStyles = createStyles((theme, { selected }) => ({
 }))
 
 function LessonBox({ name, selected, select }) {
-  const { classes } = useStyles({ selected })
+  const { classes } = useLessonBoxStyles({ selected })
 
   return <button className={classes.button} onClick={select}>
     <Group spacing={8} className={classes.boxGroup}>
@@ -80,4 +65,21 @@ function LessonBox({ name, selected, select }) {
       {name}
     </Group>
   </button>
+}
+
+function AddLessonTeacherButton({ isLesson }) { // Made for reusing this button two times
+  const [addLesson, addLessonResult] = useEditorAddLessonMutation()
+  const [addTeacher, addTeacherResult] = useEditorAddTeacherMutation()
+  // { lessonId: lesson.id, name: lesson.name, color: lesson.color, teacherIds: lesson.teacherIds, addLessonAction: 'true' }
+  // Example lesson adding
+
+  // { teacherId: teacher.id, name: teacher.name, taughtLessons: teacher.taughtLessons ? teacher.taughtLessons : [{id: data.lesson.id}], addTeacherAction: 'true' }
+  // Add teacher
+  // Similar...
+
+  return <Button fullWidth variant="light" compact onClick={() => {
+
+  }}>
+    Add {isLesson ? "lesson" : "teacher"}
+  </Button>
 }
