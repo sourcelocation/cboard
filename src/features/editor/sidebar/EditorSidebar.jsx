@@ -48,11 +48,11 @@ export const EditorSidebar = (props) => {
         <Group className={classes.sidebarSection}>
           <EditorLessonBoxCreator />
         </Group>
-        <Group position="center" className={classes.sidebarSection}>
+        {/* <Group position="center" className={classes.sidebarSection}>
           <NewLessonButton {...props} />
           <NewTeacherButton {...props} />
           <NewStudentButton {...props} />
-        </Group>
+        </Group> */}
         <Group position="center" className={classes.sidebarSection}>
           <ExcelGenerateButton {...props} />
           <ActionIcon variant="light" color="primary">
