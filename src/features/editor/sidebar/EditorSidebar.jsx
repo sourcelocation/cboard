@@ -14,7 +14,7 @@ import { EditorLessonBoxCreator } from "./EditorLessonBoxCreator";
 const useStyles = createStyles((theme, _params, getRef) => ({
   sidebar: {
     height: 'calc(100vh - 106px)',
-    width: 400,
+    width: 500,
     overflowY: 'scroll',
     padding: theme.spacing.md,
     backgroundColor: '#F7F7F7'
@@ -39,7 +39,7 @@ export const EditorSidebar = (props) => {
 
   return (
     <div className={classes.sidebar}>
-      <Stack spacing="sm">
+      <Stack spacing="sm" style={{height: '100%'}}>
         <Stack>
           {avaliableLessons.map((lesson) => (
             <LessonTeachers lesson={lesson} key={lesson.id} teachers={teachers} />
