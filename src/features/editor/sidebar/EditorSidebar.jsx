@@ -46,7 +46,7 @@ export const EditorSidebar = (props) => {
           ))}
         </Stack>
         <Group className={classes.sidebarSection}>
-          <EditorLessonBoxCreator />
+          <EditorLessonBoxCreator projectId={projectId} />
         </Group>
         {/* <Group position="center" className={classes.sidebarSection}>
           <NewLessonButton {...props} />
