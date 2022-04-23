@@ -1,4 +1,4 @@
-import { Anchor, Button, Group, Popover, TextInput, useMantineTheme } from "@mantine/core";
+import { Anchor, Button, Group, Popover, TextInput, Select } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { nanoid } from "@reduxjs/toolkit";
 import { useState } from "react";
@@ -26,9 +26,9 @@ export function NewLessonButton(props) {
       title="New lesson"
       // transition="pop-top-right"
       target={
-          <Button variant="light" onClick={() => setOpened((o) => !o)} style={{ width: '100%' }}>
-            New lesson
-          </Button>
+        <Button variant="light" onClick={() => setOpened((o) => !o)} style={{ width: '100%' }}>
+          New lesson
+        </Button>
       }
       style={{ width: '100%' }}
     >
@@ -71,15 +71,15 @@ function LessonAddForm({ initialValues, onSubmit, onCancel }) {
         variant="default"
       />
 
-      <TextInput
-        required
-        label="Email"
-        placeholder="Email"
-        style={{ minWidth: 300, marginTop: 15 }}
-        value={form.values.email}
-        onChange={(event) => form.setFieldValue('email', event.currentTarget.value)}
-        error={form.errors.email}
-        variant="default"
+      <Select
+        label="Class"
+        value={form.values.class}
+        placeholder="Select items"
+        nothingFound="Nothing found"
+        searchable
+        creatable
+        getCreateLabel={(query) => `+ Create ${query}`}
+      // onCreate={(query) => setData((current) => [...current, query])}
       />
 
       <Group position="apart" style={{ marginTop: 15 }}>

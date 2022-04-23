@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useOrganizationQuery, websocketConnection } from '../api/apiSlice'
-import logo from './../../images/CboardFile.png'
+import logo from './../../images/CboardIcon-96.png'
 import { BsCloudCheck, BsCloudSlash, BsCloudMinus } from 'react-icons/bs'
 import { Loader } from '@mantine/core'
 

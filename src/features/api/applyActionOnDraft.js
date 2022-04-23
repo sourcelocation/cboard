@@ -1,12 +1,7 @@
 
 export function applyActionOnDraft(draft, action) {
-  if (action.multipleActions) {
-    for (const action1 of action.actions) {
-      applyActionOnDraft(draft, JSON.parse(action1))
-    }
-  }
   // Schedule
-  else if (action.moveScheduleLessonAction) {
+  if (action.moveScheduleLessonAction) {
     const { fromI, toI } = action
     draft.students.entities[toI.studentId].schedule[toI.dayI][toI.lessonI] = draft.students.entities[fromI.studentId].schedule[fromI.dayI][fromI.lessonI]
     draft.students.entities[fromI.studentId].schedule[fromI.dayI][fromI.lessonI] = null
@@ -39,16 +34,8 @@ export function applyActionOnDraft(draft, action) {
 
   // Lessons
   else if (action.addLessonAction) {
-    const { lessonId, name, color, teacherIds } = action
+    const { lessonId, name, color } = action
     draft.lessons.entities[lessonId] = { id: lessonId, name: name, color: color }
-
-    if (teacherIds) {
-      for (const tId in draft.teachers.entities) {
-        if (teacherIds.includes(tId)) {
-          draft.teachers.entities[tId].taughtLessons.push({ id: lessonId })
-        }
-      }
-    }
   } else if (action.updateLessonsAction) {
     const { patches } = action
     for (const lessonId in patches) {

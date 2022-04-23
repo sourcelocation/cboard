@@ -5,9 +5,11 @@ import { Plus } from 'tabler-icons-react';
 
 function ProjectItem(props) {
   const project = props.project
-  return <div style={{ borderRadius: '8pt', backgroundColor: 'rgb(112 121 255)', height: '100pt' }}>
-    <h2 style={{ fontWeight: 'bold', textAlign: 'start', padding: '10pt', color: 'white' }}>{project.name}</h2>
-  </div>
+  return <Link to={`/editor/${project.id}`} style={{textDecoration: 'none'}}>
+    <div style={{ borderRadius: '8pt', backgroundColor: 'white', height: '100pt' }}>
+      <h3 style={{ fontWeight: 'bold', textAlign: 'start', padding: '10pt', color: 'black' }}>{project.name}</h3>
+    </div>
+  </Link>
 }
 
 export default function DashboardPage() {
@@ -15,7 +17,7 @@ export default function DashboardPage() {
   const [addProject, addProjectResult] = useAddProjectMutation()
 
   return (
-    <div style={{ margin: '8px 40px' }}>
+    <div style={{ padding: '8px 40px', height: 'calc(100vh)', backgroundColor: '#F7F7F7' }}>
       <div style={{ display: 'flex', justifyContent: 'start', alignItems: 'center' }}>
         <Title order={2}>Projects</Title>
         <Space w="md" />
@@ -35,9 +37,7 @@ export default function DashboardPage() {
           ]}
         >
           {organization.projects.map(p =>
-            <Link to={`/editor/${p.id}`}>
-              <ProjectItem project={p} />
-            </Link>
+            <ProjectItem project={p} />
           )}
         </SimpleGrid>
 

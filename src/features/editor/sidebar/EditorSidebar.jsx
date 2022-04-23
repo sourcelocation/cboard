@@ -40,11 +40,6 @@ export const EditorSidebar = (props) => {
   return (
     <div className={classes.sidebar}>
       <Stack spacing="sm" style={{height: '100%'}}>
-        <Stack>
-          {avaliableLessons.map((lesson) => (
-            <LessonTeachers lesson={lesson} key={lesson.id} teachers={teachers} />
-          ))}
-        </Stack>
         <Group className={classes.sidebarSection}>
           <EditorLessonBoxCreator projectId={projectId} />
         </Group>
