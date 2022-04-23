@@ -43,11 +43,15 @@ console.log(lessonBoxVisible);
         </Grid.Col>
       </Grid>
       <Center>
+        {/* TODO: Re-do this skeleton nonesense */}
         <Skeleton visible={!lessonBoxVisible} animate={false} >
           {lessonBoxVisible ? <CopyableLessonBox
             lesson={selectedLesson ? lessons[selectedLesson] : null}
             teacher={selectedTeacher ? teachers[selectedTeacher] : null}
-          /> : <LessonBox />}
+            big={true}
+          /> : 
+          <LessonBox />
+          }
         </Skeleton>
       </Center>
     </Stack>

@@ -39,7 +39,6 @@ export default function EditorSchedule(props) {
   })
 
   const [allowedFields, setallowedFields] = useState(null)
-  const [zoom, setZoom] = useState(100)
 
   const [{ }, drop] = useDrop(() => ({
     accept: ItemTypes.BOX,
@@ -93,7 +92,6 @@ export default function EditorSchedule(props) {
             students={students}
             teachers={teachers}
             width={width}
-            zoom={zoom}
           />
         )}
       </AutoSizer>
@@ -175,14 +173,14 @@ function cellRenderer(props) {
 }
 
 function Class1(props) {
-  const { allowedFields, classI, data, students, zoom } = props
+  const { allowedFields, classI, data, students } = props
   const dayNames = useSelector(state => selectDays(state))
 
   return (
     <div style={{ display: 'flex', flexDirection: 'row', marginBottom: '30pt' }} key={props.dayI}>
       {classI === 0 && <h4 style={{ padding: '34pt 20pt', width: '100pt', color: 'black' }}>{dayNames[props.dayI]}</h4>}
       <div style={{ flex: 1, flexDirection: 'column', padding: '0 30pt 0 5pt' }}>
-        <p style={{ paddingRight: '0pt', fontSize: applyZoom(20, zoom) }}>{data.name}</p>
+        <p style={{ paddingRight: '0pt', fontSize: '1em' }}>{data.name}</p>
         <div style={{ display: 'flex', flexDirection: 'row' }} key={data.name}>
           {Object.keys(data.students).map((studentId, studentI) => {
             return <Student
@@ -254,13 +252,13 @@ function Student(props) {
 
   </div >
 }
-const useStyles = createStyles((theme, { zoom, canPlace, isDraggingLesson, isOver }) => ({
+const useStyles = createStyles((theme, { canPlace, isDraggingLesson, isOver }) => ({
   field: {
     backgroundColor: '#FFFFFF',
     borderRadius: theme.radius.md,
     textAlign: 'center',
-    width: applyZoom(180, zoom),
-    height: applyZoom(60, zoom),
+    width: '180px',
+    height: '60px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',

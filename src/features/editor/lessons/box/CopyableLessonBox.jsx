@@ -7,7 +7,7 @@ import { selectTeacherById } from "../../teachers/teachersSlice"
 import { selectLessonById } from "../lessonsSlice"
 import { LessonBox } from "./LessonBox"
 
-export const CopyableLessonBox = React.memo(({ lesson, teacher, zoom }) => {
+export const CopyableLessonBox = React.memo(({ big, lesson, teacher }) => {
   const lessonId = lesson.id
   const teacherId = teacher.id
 
@@ -26,10 +26,14 @@ export const CopyableLessonBox = React.memo(({ lesson, teacher, zoom }) => {
     //   console.log("set");
     // },
   }), [lessonId, teacherId])
+
   return <div ref={drag} style={{ transform: 'translate(0, 0)' }}>
-    <DragPreviewImage connect={preview} src={
-      <LessonBox lessonName={lesson.name} teacherName={teacher.name} color={lesson.color} copyable zoom={zoom} />
-    } />
-    <LessonBox lessonName={lesson.name} teacherName={teacher.name} color={lesson.color} copyable />
+    <LessonBox
+      color={lesson.color}
+      copyable
+      lessonName={lesson.name}
+      teacherName={teacher.name}
+      style={big ? { height: '60px' } : { height: '30px' }}
+    />
   </div>
 })

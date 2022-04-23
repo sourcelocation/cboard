@@ -40,32 +40,8 @@ export const DraggableLessonBox = React.memo((props) => {
   }
 
   return (
-    <div ref={drag} style={{ opacity: isDragging ? 0 : 1, width: applyZoom(185,zoom) }}>
-      {/* <LessonBox lessonName={lesson.name} teacherName={teacher.name} color={lesson.color} room={roomName} copyable={false} selectRoom={roomSelect} zoom={zoom} />
-      <Modal visible={modalShown} title="Выбор кабинета" onCancel={() => setmodalShown(false)} footer={[
-        <Button key="back" onClick={() => {
-          setmodalShown(false)
-          setRoom({ i: i, room: null })
-        }} type='dashed'>
-          Без кабинета
-        </Button>,
-        <Button key="back" onClick={() => {
-          // dispatch(lessonDeleted({ lessonI: droppedI.lessonI, dayI: droppedI.dayI, studentId: droppedI.studentId }))
-          setmodalShown(false)
-          // setdroppedI(null)
-        }}>
-          Отмена
-        </Button>
-      ]}>
-        {roomNames && roomNames.map(room => {
-          return <Button key={room.name} shape='circle' style={{ margin: '4pt' }} disabled={!room.available} onClick={() => {
-            setRoom({ i: i, room: room.name })
-            setmodalShown(false)
-          }}>
-            {room.name}
-          </Button>
-        })}
-      </Modal> */}
+    <div ref={drag} style={{ opacity: isDragging ? 0 : 1 }}>
+      <LessonBox lessonName={lesson.name} teacherName={teacher.name} color={lesson.color} room={roomName} copyable={false} selectRoom={roomSelect} style={{height: '60px', width: '180px'}} />
     </div>
   )
 })

@@ -14,27 +14,8 @@ import { applyZoom } from './DraggableLessonBox.jsx'
 import { ActionIcon, Button } from '@mantine/core';
 
 
-export const LessonBox = React.memo(({ color, lessonName, teacherName, room, copyable, selectRoom, zoom }) => {
+export const LessonBox = React.memo(({ color, lessonName, teacherName, room, copyable, selectRoom, style }) => {
   const colorsStyle = colors[color] || [color, "black"]
-
-  // type='text' style={{
-  //   color: colorsStyle[1],
-  //   padding: '0',
-  //   fontSize: applyZoom(10, zoom),
-  //   fontWeight: 'bold',
-  //   letterSpacing: '-1pt',
-  //   width: '12%',
-  // }}
-
-  // size='small'
-  // type='text'
-  // style={{
-  //   color: colorsStyle[1],
-  //   fontSize: applyZoom(10, zoom),
-  //   padding: '0',
-  //   height: '35%',
-  //   width: '12%'
-  // }}
 
   const renderedRoom = room || copyable ?
     <Button size='xs' variant="light" onClick={selectRoom}>
@@ -48,11 +29,10 @@ export const LessonBox = React.memo(({ color, lessonName, teacherName, room, cop
       style={{
         alignItems: 'flex-end',
         backgroundColor: colorsStyle[0],
-        borderRadius: applyZoom(9, zoom),
+        borderRadius: '9px',
         display: 'flex',
-        // width: applyZoom(180, zoom),
-        // height: applyZoom(60, zoom),
-        justifyContent: copyable ? 'center' : 'start'
+        justifyContent: copyable ? 'center' : 'start',
+        ...style
       }}
     >
       {!copyable && renderedRoom}
@@ -73,14 +53,14 @@ export const LessonBox = React.memo(({ color, lessonName, teacherName, room, cop
             justifyContent: 'flex-end',
             color: colorsStyle[1],
             fontWeight: '600',
-            fontSize: applyZoom(13, zoom),
+            fontSize: '0.75em',
           }}
         >
           {lessonName}
         </div>
         <p
           style={{
-            fontSize: applyZoom(10.5, zoom),
+            fontSize: '0.75em',
             margin: '0',
             color: colorsStyle[1],
 
