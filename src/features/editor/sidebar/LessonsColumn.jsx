@@ -29,7 +29,7 @@ const useLessonBoxStyles = createStyles((theme, { selected, lessonColor }) => ({
   }
 }))
 
-export function LessonBox({ lesson, selected, select }) {
+export function LessonCreatorRow({ lesson, selected, select }) {
   const { name, id, color } = lesson
   const { classes } = useLessonBoxStyles({ selected, lessonColor: color })
 

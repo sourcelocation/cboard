@@ -22,7 +22,7 @@ const useTeacherBoxStyles = createStyles((theme, { selected }) => ({
   }
 }))
 
-export function TeacherBox({ teacher, selected, select }) {
+export function TeacherCreatorRow({ teacher, selected, select }) {
   const { name, id } = teacher
   const { classes } = useTeacherBoxStyles({ selected })
 

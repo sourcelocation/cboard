@@ -26,12 +26,10 @@ export const CopyableLessonBox = React.memo(({ lesson, teacher, zoom }) => {
     //   console.log("set");
     // },
   }), [lessonId, teacherId])
-  return (<div ref={drag} style={{ transform: 'translate(0, 0)' }}>
+  return <div ref={drag} style={{ transform: 'translate(0, 0)' }}>
     <DragPreviewImage connect={preview} src={
       <LessonBox lessonName={lesson.name} teacherName={teacher.name} color={lesson.color} copyable zoom={zoom} />
     } />
     <LessonBox lessonName={lesson.name} teacherName={teacher.name} color={lesson.color} copyable />
-
-
-  </div>)
+  </div>
 })

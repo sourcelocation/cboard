@@ -1,43 +1,56 @@
-import { Grid, Space, Stack, Button, Popover } from "@mantine/core";
+import { Grid, Space, Stack, Button, Popover, Skeleton, Group, Center } from "@mantine/core";
 import { nanoid } from "@reduxjs/toolkit";
 import { useState } from "react";
 import { Plus } from 'tabler-icons-react';
 import { useEditorAddLessonMutation, useEditorAddTeacherMutation, useGetEditorDataQuery } from '../../api/apiSlice';
-import { LessonBox, LessonAddForm } from "./LessonsColumn";
-import { TeacherBox, TeacherAddForm } from "./TeachersColumn";
+import { CopyableLessonBox } from "../lessons/box/CopyableLessonBox";
+import { LessonBox } from "../lessons/box/LessonBox";
+import { LessonCreatorRow, LessonAddForm } from "./LessonsColumn";
+import { TeacherCreatorRow, TeacherAddForm } from "./TeachersColumn";
 
 export function EditorLessonBoxCreator({ projectId }) {
   const { lessons, teachers } = useGetEditorDataQuery(projectId, {
     selectFromResult: ({ data }) => ({
-      lessons: data ? Object.values(data.lessons.entities) : [],
-      teachers: data ? Object.values(data.teachers.entities) : [],
+      lessons: data ? data.lessons.entities : {},
+      teachers: data ? data.teachers.entities : {},
     }),
   })
   // const names = ["Mathematics", "Geography", "Biology", "Science", "Mathematics1", "Geography1", "Biology1", "Science1", "Mathematics2", "Geography2", "Biology2", "Science2",]
   const [selectedLesson, setselectedLesson] = useState(null)
   const [selectedTeacher, setselectedTeacher] = useState(null)
-
+  const lessonBoxVisible = !!lessons[selectedLesson] && !!teachers[selectedTeacher]
+console.log(lessonBoxVisible);
   return (
-    <Grid grow style={{ width: '100%' }}>
-      <Grid.Col span={6}>
-        <Stack spacing={0}>
-          {lessons.map(lesson =>
-            <LessonBox lesson={lesson} selected={selectedLesson === lesson.id} select={() => setselectedLesson(lesson.id)} />
-          )}
-          <Space h='xs' />
-          <AddLessonTeacherButton isLesson projectId={projectId} />
-        </Stack>
-      </Grid.Col>
-      <Grid.Col span={6}>
-        <Stack spacing={0}>
-          {teachers.map(teacher =>
-            <TeacherBox teacher={teacher} selected={selectedTeacher === teacher.id} select={() => setselectedTeacher(teacher.id)} />
-          )}
-          <Space h='xs' />
-          <AddLessonTeacherButton projectId={projectId} />
-        </Stack>
-      </Grid.Col>
-    </Grid>
+    <Stack spacing="lg" style={{width: '100%'}}>
+      <Grid>
+        <Grid.Col span={6}>
+          <Stack spacing={0}>
+            {Object.values(lessons).map(lesson =>
+              <LessonCreatorRow lesson={lesson} selected={selectedLesson === lesson.id} select={() => setselectedLesson(lesson.id)} />
+            )}
+            <Space h='xs' />
+            <AddLessonTeacherButton isLesson projectId={projectId} />
+          </Stack>
+        </Grid.Col>
+        <Grid.Col span={6}>
+          <Stack spacing={0}>
+            {Object.values(teachers).map(teacher =>
+              <TeacherCreatorRow teacher={teacher} selected={selectedTeacher === teacher.id} select={() => setselectedTeacher(teacher.id)} />
+            )}
+            <Space h='xs' />
+            <AddLessonTeacherButton projectId={projectId} />
+          </Stack>
+        </Grid.Col>
+      </Grid>
+      <Center>
+        <Skeleton visible={!lessonBoxVisible} animate={false} >
+          {lessonBoxVisible ? <CopyableLessonBox
+            lesson={selectedLesson ? lessons[selectedLesson] : null}
+            teacher={selectedTeacher ? teachers[selectedTeacher] : null}
+          /> : <LessonBox />}
+        </Skeleton>
+      </Center>
+    </Stack>
   )
 }
 

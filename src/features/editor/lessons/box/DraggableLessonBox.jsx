@@ -1,13 +1,9 @@
 import React from "react"
 import { useDrag } from "react-dnd"
-import { useDispatch, useSelector } from "react-redux"
 import { ItemTypes } from "../../Editor"
-import { selectTeacherById } from "../../teachers/teachersSlice"
-import { selectLessonById } from "../lessonsSlice"
 import { LessonBox } from "./LessonBox"
 import { useState } from "react";
-import { roomsForScheduleLessonI, selectRoomsForLessonI } from "../../schedule/scheduleInfoSlice"
-import { lessonDeleted, lessonMoved, lessonRoomAdded } from "../../students/studentSlice"
+import { roomsForScheduleLessonI } from "../../schedule/scheduleInfoSlice"
 import { useEditorSetScheduleLessonRoomMutation } from "../../../api/apiSlice"
 
 export const applyZoom = (size, zoom) => {
@@ -45,7 +41,7 @@ export const DraggableLessonBox = React.memo((props) => {
 
   return (
     <div ref={drag} style={{ opacity: isDragging ? 0 : 1, width: applyZoom(185,zoom) }}>
-      <LessonBox lessonName={lesson.name} teacherName={teacher.name} color={lesson.color} room={roomName} copyable={false} selectRoom={roomSelect} zoom={zoom} />
+      {/* <LessonBox lessonName={lesson.name} teacherName={teacher.name} color={lesson.color} room={roomName} copyable={false} selectRoom={roomSelect} zoom={zoom} />
       <Modal visible={modalShown} title="Выбор кабинета" onCancel={() => setmodalShown(false)} footer={[
         <Button key="back" onClick={() => {
           setmodalShown(false)
@@ -69,7 +65,7 @@ export const DraggableLessonBox = React.memo((props) => {
             {room.name}
           </Button>
         })}
-      </Modal>
+      </Modal> */}
     </div>
   )
 })

@@ -1,55 +1,48 @@
-import { useSelector, useDispatch } from 'react-redux'
-import { selectTeacherById } from '../../teachers/teachersSlice.js'
-import { useDrag } from 'react-dnd'
-import { ItemTypes } from '../../Editor.jsx'
-import { lessonSet, lessonMoved, lessonDeleted, selectLessonByI, lessonRoomAdded } from '../../students/studentSlice.js'
-import useFitText from "use-fit-text";
-import { selectLessonById } from '../lessonsSlice.js'
+// import { useSelector, useDispatch } from 'react-redux'
+// import { selectTeacherById } from '../../teachers/teachersSlice.js'
+// import { useDrag } from 'react-dnd'
+// import { ItemTypes } from '../../Editor.jsx'
+// import { lessonSet, lessonMoved, lessonDeleted, selectLessonByI, lessonRoomAdded } from '../../students/studentSlice.js'
+// import useFitText from "use-fit-text";
+// import { selectLessonById } from '../lessonsSlice.js'
+import { Door } from 'tabler-icons-react';
 import React, { useState } from 'react'
-import { selectAllRooms, selectRoomsForLessonI } from '../../schedule/scheduleInfoSlice.js'
+// import { selectAllRooms, selectRoomsForLessonI } from '../../schedule/scheduleInfoSlice.js'
 import { IoSettingsOutline } from 'react-icons/io5'
 import { colors } from '../colors'
 import { applyZoom } from './DraggableLessonBox.jsx'
+import { ActionIcon, Button } from '@mantine/core';
 
 
 export const LessonBox = React.memo(({ color, lessonName, teacherName, room, copyable, selectRoom, zoom }) => {
   const colorsStyle = colors[color] || [color, "black"]
 
-  const renderedRoom = (
-    (room || copyable ?
-      (<Button
-        size='small'
-        type='text' style={{
-          color: colorsStyle[1],
-          padding: '0',
-          fontSize: applyZoom(10, zoom),
-          fontWeight: 'bold',
-          letterSpacing: '-1pt',
-          width: '12%',
-        }}
-        onClick={selectRoom}>
-        {room}
-      </Button>) :
-      (
-        <Button
-          size='small'
-          type='text'
-          style={{
-            color: colorsStyle[1],
-            fontSize: applyZoom(10, zoom),
-            padding: '0',
-            height: '35%',
-            width: '12%'
-          }}
-          icon={
-            <IoSettingsOutline
-              size={zoom / 7}
-            />}
-          onClick={selectRoom}
-        />
-      )
-    )
-  )
+  // type='text' style={{
+  //   color: colorsStyle[1],
+  //   padding: '0',
+  //   fontSize: applyZoom(10, zoom),
+  //   fontWeight: 'bold',
+  //   letterSpacing: '-1pt',
+  //   width: '12%',
+  // }}
+
+  // size='small'
+  // type='text'
+  // style={{
+  //   color: colorsStyle[1],
+  //   fontSize: applyZoom(10, zoom),
+  //   padding: '0',
+  //   height: '35%',
+  //   width: '12%'
+  // }}
+
+  const renderedRoom = room || copyable ?
+    <Button size='xs' variant="light" onClick={selectRoom}>
+      {room}
+    </Button> :
+    <ActionIcon onClick={selectRoom}>
+      <Door />
+    </ActionIcon>
   return (
     <div
       style={{
@@ -57,8 +50,8 @@ export const LessonBox = React.memo(({ color, lessonName, teacherName, room, cop
         backgroundColor: colorsStyle[0],
         borderRadius: applyZoom(9, zoom),
         display: 'flex',
-        width: applyZoom(180, zoom),
-        height: applyZoom(60, zoom),
+        // width: applyZoom(180, zoom),
+        // height: applyZoom(60, zoom),
         justifyContent: copyable ? 'center' : 'start'
       }}
     >
