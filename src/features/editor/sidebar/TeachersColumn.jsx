@@ -28,7 +28,7 @@ export function TeacherBox({ teacher, selected, select }) {
 
   return <button className={classes.button} onClick={select}>
     <Group spacing={8} className={classes.boxGroup}>
-      {selected ? <Check size={16} /> : <Avatar radius="md" />}
+      {selected ? <Check size={16} /> : <Avatar radius="md" size="xs" />}
       {name}
     </Group>
   </button>
