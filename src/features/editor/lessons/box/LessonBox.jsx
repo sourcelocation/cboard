@@ -8,21 +8,21 @@
 import { Door } from 'tabler-icons-react';
 import React, { useState } from 'react'
 // import { selectAllRooms, selectRoomsForLessonI } from '../../schedule/scheduleInfoSlice.js'
-import { IoSettingsOutline } from 'react-icons/io5'
 import { colors } from '../colors'
 import { applyZoom } from './DraggableLessonBox.jsx'
 import { ActionIcon, Button } from '@mantine/core';
 
 
 export const LessonBox = React.memo(({ color, lessonName, teacherName, room, copyable, selectRoom, style }) => {
-  const colorsStyle = colors[color] || [color, "black"]
+  const colorsStyle = colors[color] || [color, "white"]
+  console.log(color);
 
   const renderedRoom = room || copyable ?
     <Button size='xs' variant="light" onClick={selectRoom}>
       {room}
     </Button> :
-    <ActionIcon onClick={selectRoom}>
-      <Door />
+    <ActionIcon onClick={selectRoom} variant='transparent' color={color} style={{position: 'absolute', left: 0, bottom: 0}}>
+      <Door color='white' size={16} />
     </ActionIcon>
   return (
     <div
@@ -32,6 +32,7 @@ export const LessonBox = React.memo(({ color, lessonName, teacherName, room, cop
         borderRadius: '9px',
         display: 'flex',
         justifyContent: copyable ? 'center' : 'start',
+        position: 'relative',
         ...style
       }}
     >
@@ -39,7 +40,7 @@ export const LessonBox = React.memo(({ color, lessonName, teacherName, room, cop
       <div
         style={{
           height: '100%',
-          width: '76%',
+          width: '100%',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -71,7 +72,6 @@ export const LessonBox = React.memo(({ color, lessonName, teacherName, room, cop
           {teacherName}
         </p>
       </div>
-      {/* {renderedRoom} */}
     </div>
   )
 })

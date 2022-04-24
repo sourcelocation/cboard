@@ -3,6 +3,7 @@ import { useForm } from "@mantine/form"
 import { nanoid } from "@reduxjs/toolkit"
 import { useEditorAddLessonMutation } from "features/api/apiSlice"
 import { Check } from "tabler-icons-react"
+import { colors } from "../lessons/colors"
 
 const useLessonBoxStyles = createStyles((theme, { selected, lessonColor }) => ({
   button: {
@@ -47,7 +48,6 @@ export function LessonAddForm({ onSubmit, onCancel }) {
   const form = useForm({
     initialValues: { name: '', color: '' }
   } )
-
   return (
     <form onSubmit={form.onSubmit((values) => {
       onSubmit()
@@ -66,7 +66,7 @@ export function LessonAddForm({ onSubmit, onCancel }) {
         placeholder="Click to select"
         label="Color"
         format="hex"
-        swatches={['#25262b', '#868e96', '#fa5252', '#e64980', '#be4bdb', '#7950f2', '#4c6ef5', '#228be6', '#15aabf', '#12b886', '#40c057', '#82c91e', '#fab005', '#fd7e14']}
+        swatches={Object.values(colors).map(l => l[0])}
         withinPortal={false}
         {...form.getInputProps("color")}
       />

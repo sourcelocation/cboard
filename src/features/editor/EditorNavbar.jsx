@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useOrganizationQuery, websocketConnection } from '../api/apiSlice'
 import logo from './../../images/CboardIcon-96.png'
-import { BsCloudCheck, BsCloudSlash, BsCloudMinus } from 'react-icons/bs'
 import { Loader } from '@mantine/core'
+import { Cloud, CloudOff } from 'tabler-icons-react';
 
 export const EditorNavbar = ({ setZoom }) => {
   const params = useParams()
@@ -22,13 +22,12 @@ export const EditorNavbar = ({ setZoom }) => {
   }, []);
 
   let syncText = "Connecting..."
-  let syncIcon = <BsCloudMinus />
+  let syncIcon = <CloudOff color='gray' size="16px" />
   if (syncedState == 1) {
     syncText = "Synced"
-    syncIcon = <BsCloudCheck />
+    syncIcon = <Cloud color='gray' size="16px"  />
   } else if (syncedState == 3) {
     syncText = "Connection failed"
-    syncIcon = <BsCloudSlash />
   }
 
   return (
