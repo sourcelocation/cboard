@@ -21,7 +21,7 @@
     "react-virtualized": "^9.22.3",
     "redux": "^4.2.0",
     "source-map-explorer": "^2.5.2",
-    "tabler-icons-react": "^1.46.0"
+    "tabler-icons-react": "^1.47.0"
   },
   "scripts": {
     "start": "react-scripts start",
