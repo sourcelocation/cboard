@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@mantine/core": "^4.2.1",
-    "@mantine/form": "^4.2.1",
+    "@mantine/form": "^5.1.6",
     "@mantine/hooks": "^4.1.5",
     "@mantine/modals": "^4.2.2",
     "@mantine/next": "^4.2.1",
